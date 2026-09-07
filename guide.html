@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cẩm Nang Hướng Dẫn & Tra Cứu Khối Lệnh 🐍 SaoVietPyScratch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Nunito hỗ trợ hoàn hảo 100% tiếng Việt có dấu, bo tròn thân thiện với trẻ em -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .playful-font {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+        }
+
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2b53a7;
+        }
+
+        /* Glassmorphism & Cards */
+        .glass-header {
+            background: rgba(43, 83, 167, 0.96);
+            backdrop-filter: blur(12px);
+        }
+
+        .block-card {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .block-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px -6px rgba(43, 83, 167, 0.12);
+        }
+
+        /* Scratch-like block pill */
+        .scratch-pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            padding: 4px 14px;
+            font-weight: 700;
+            font-size: 13px;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link.active {
+            color: #2b53a7;
+            font-weight: 800;
+            background-color: #e6effc;
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #f89b1c;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+
+<body class="bg-[#f0f4fa] text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Top Sticky Header -->
+    <header class="glass-header text-white sticky top-0 z-50 border-b border-[#1f3d80] shadow-md px-4 sm:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <!-- Brand -->
+            <a href="index.html" class="flex items-center space-x-3 group">
+                <div
+                    class="bg-[#f89b1c] text-white p-2 rounded-xl shadow-md transform -rotate-3 group-hover:rotate-0 transition-transform flex items-center justify-center">
+                    <i class="fa-solid fa-snake text-2xl"></i>
+                </div>
+                <div>
+                    <div class="text-xl sm:text-2xl font-black playful-font tracking-wide flex items-center gap-1.5">
+                        <span>SaoVietPyScratch</span>
+                        <span class="text-[#f89b1c]">🐍</span>
+                    </div>
+                    <p class="text-[11px] text-blue-200 font-medium hidden sm:block">Cẩm Nang Hướng Dẫn & Từ Điển Khối
+                        Lệnh</p>
+                </div>
+            </a>
+
+            <!-- Search Quick Jump (Desktop) -->
+            <div class="relative hidden md:block flex-1 max-w-md mx-6">
+                <i
+                    class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-blue-200 text-sm"></i>
+                <input type="text" id="header-search-input" oninput="syncAndSearch(this.value)"
+                    placeholder="Tìm nhanh khối lệnh (tiến, vẽ tròn, lặp, print...)..."
+                    class="w-full pl-10 pr-4 py-2 text-xs bg-white/10 hover:bg-white/15 focus:bg-white text-white focus:text-slate-800 placeholder-blue-200 focus:placeholder-slate-400 rounded-xl border border-white/20 focus:border-white focus:outline-none transition-all">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center space-x-3 shrink-0">
+                <a href="index.html"
+                    class="inline-flex items-center space-x-2 bg-[#f89b1c] hover:bg-[#e0860f] active:bg-[#c97507] text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all transform hover:scale-105 active:scale-95 cursor-pointer border border-[#ffb84d]/40">
+                    <i class="fa-solid fa-play text-xs"></i>
+                    <span>Vào Lập Trình Ngay</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container with Sticky Sidebar -->
+    <div class="max-w-7xl mx-auto w-full flex-1 px-4 sm:px-6 lg:px-8 py-6 flex gap-8">
+
+        <!-- Left Table of Contents (Sticky on Desktop) -->
+        <aside class="w-64 shrink-0 hidden lg:block">
+            <div class="sticky top-20 bg-white rounded-2xl border-2 border-[#cbdbea] p-4 shadow-sm space-y-4">
+                <div class="flex items-center space-x-2 pb-3 border-b border-slate-100 text-[#2b53a7] font-bold text-sm">
+                    <i class="fa-solid fa-compass text-[#f89b1c]"></i>
+                    <span>Mục Lục Hướng Dẫn</span>
+                </div>
+                <nav class="space-y-1 text-xs font-semibold text-slate-600" id="sidebar-nav">
+                    <a href="#overview"
+                        class="nav-link px-3 py-2 transition-all hover:bg-[#e6effc] hover:text-[#2b53a7]">
+                        <span class="w-5 text-center mr-2.5 shrink-0 inline-flex items-center justify-center text-sm text-[#2b53a7]"><i class="fa-solid fa-desktop"></i></span>
+                        <span>1. Tổng quan giao diện</span>
+                    </a>
+                    <a href="#modes"
+                        class="nav-link px-3 py-2 transition-all hover:bg-[#e6effc] hover:text-[#2b53a7]">
+                        <span class="w-5 text-center mr-2.5 shrink-0 inline-flex items-center justify-center text-sm text-indigo-500"><i class="fa-solid fa-sliders"></i></span>
+                        <span>2. Khối lệnh vs Gõ Python</span>
+                    </a>
+                    <a href="#stage"
+                        class="nav-link px-3 py-2 transition-all hover:bg-[#e6effc] hover:text-[#2b53a7]">
+                        <span class="w-5 text-center mr-2.5 shrink-0 inline-flex items-center justify-center text-sm">🐢</span>
+                        <span>3. Sân khấu & Nhân vật</span>
+                    </a>
+                    <a href="#terminal"
+                        class="nav-link px-3 py-2 transition-all hover:bg-[#e6effc] hover:text-[#2b53a7]">
+                        <span class="w-5 text-center mr-2.5 shrink-0 inline-flex items-center justify-center text-sm text-slate-600"><i class="fa-solid fa-terminal"></i></span>
+                        <span>4. Cửa sổ Terminal & Nhập</span>
+                    </a>
+                    <a href="#magic-vars"
+                        class="nav-link px-3 py-2 transition-all hover:bg-[#e6effc] hover:text-[#2b53a7]">
+                        <span class="w-5 text-center mr-2.5 shrink-0 inline-flex items-center justify-center text-sm text-amber-500"><i class="fa-solid fa-gem"></i></span>
+                        <span>5. Rương Kho báu Biến số</span>
+                    </a>
+                    <a href="#blocks-dictionary"
+                        class="nav-link px-3 py-2 transition-all hover:bg-[#e6effc] hover:text-[#2b53a7]">
+                        <span class="w-5 text-center mr-2.5 shrink-0 inline-flex items-center justify-center text-sm text-pink-500"><i class="fa-solid fa-book-open"></i></span>
+                        <span>6. Từ điển toàn bộ Khối lệnh</span>
+                    </a>
+                    <a href="#challenges"
+                        class="nav-link px-3 py-2 transition-all hover:bg-[#e6effc] hover:text-[#2b53a7]">
+                        <span class="w-5 text-center mr-2.5 shrink-0 inline-flex items-center justify-center text-sm text-amber-500"><i class="fa-solid fa-trophy"></i></span>
+                        <span>7. Hệ thống 14 Thử thách</span>
+                    </a>
+                    <a href="#safety-tips"
+                        class="nav-link px-3 py-2 transition-all hover:bg-[#e6effc] hover:text-[#2b53a7]">
+                        <span class="w-5 text-center mr-2.5 shrink-0 inline-flex items-center justify-center text-sm text-rose-500"><i class="fa-solid fa-shield-heart"></i></span>
+                        <span>8. Mẹo hay & Phòng lỗi</span>
+                    </a>
+                </nav>
+
+                <!-- Quick Stats Badge -->
+                <div class="pt-3 border-t border-slate-100 text-[11px] text-slate-500 space-y-1.5">
+                    <div class="flex justify-between">
+                        <span>Tổng số khối lệnh:</span>
+                        <span class="font-bold text-[#2b53a7]">26 khối</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Nhóm danh mục:</span>
+                        <span class="font-bold text-[#f89b1c]">7 nhóm</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Cấp độ thử thách:</span>
+                        <span class="font-bold text-emerald-600">5 cấp độ</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Main Content -->
+        <main class="flex-1 min-w-0 space-y-12">
+
+            <!-- Hero Banner -->
+            <section
+                class="bg-gradient-to-r from-[#2b53a7] via-[#24468f] to-[#1a346e] rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl space-y-3">
+                    <span
+                        class="inline-flex items-center space-x-1.5 bg-[#f89b1c] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        <i class="fa-solid fa-star"></i>
+                        <span>Cẩm nang học tập chính thức</span>
+                    </span>
+                    <h1 class="text-2xl sm:text-4xl font-black playful-font tracking-wide">
+                        Khám Phá SaoVietPyScratch 🐍
+                    </h1>
+                    <p class="text-sm sm:text-base text-blue-100 leading-relaxed font-medium">
+                        Cầu nối hoàn hảo giữa tư duy kéo thả Scratch và ngôn ngữ lập trình Python hàng đầu thế giới.
+                        Trang hướng dẫn này sẽ giúp bạn làm chủ mọi khối lệnh, từng nút bấm trên màn hình và vượt qua 14
+                        thử thách vinh quang!
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <a href="#blocks-dictionary"
+                            class="px-4 py-2 bg-white text-[#2b53a7] font-bold text-xs sm:text-sm rounded-xl hover:bg-blue-50 transition-all shadow-md">
+                            🔍 Tra cứu khối lệnh ngay
+                        </a>
+                        <a href="#overview"
+                            class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-bold text-xs sm:text-sm rounded-xl transition-all border border-white/20">
+                            🗺️ Xem sơ đồ giao diện
+                        </a>
+                    </div>
+                </div>
+                <!-- Background graphic -->
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-15 text-[240px] pointer-events-none select-none text-white">
+                    <i class="fa-brands fa-python"></i>
+                </div>
+            </section>
+
+            <!-- SECTION 1: OVERVIEW OF UI -->
+            <section id="overview" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-3 pb-3 border-b-2 border-slate-200">
+                    <div
+                        class="w-10 h-10 rounded-2xl bg-[#e6effc] text-[#2b53a7] flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-desktop"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-800 playful-font">1. Tổng Quan Bố Cục Giao
+                            Diện</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">SaoVietPyScratch được bố trí trực quan
+                            theo 3 cột chuẩn Studio giáo dục</p>
+                    </div>
+                </div>
+
+                <!-- Visual Layout Blueprint Mockup -->
+                <div class="bg-white rounded-3xl border-2 border-[#cbdbea] p-5 sm:p-7 shadow-sm space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <!-- Col 1: Editor Card (5 cols) -->
+                        <div
+                            class="md:col-span-5 bg-[#eef4fc] border-2 border-[#2b53a7] rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden">
+                            <div class="flex items-center justify-between pb-3 border-b border-[#2b53a7]/20 mb-3">
+                                <span class="font-bold text-xs text-[#2b53a7] flex items-center gap-1.5">
+                                    <i class="fa-solid fa-puzzle-piece"></i> Khu vực Lệnh
+                                </span>
+                                <span class="text-[10px] bg-[#2b53a7] text-white px-2 py-0.5 rounded-full font-bold">Cột
+                                    Trái</span>
+                            </div>
+                            <div class="space-y-2 text-xs text-slate-700 leading-relaxed">
+                                <p><b>• Thanh danh mục Scratch:</b> 7 vòng tròn màu phân loại lệnh (In ấn, Biến, Toán,
+                                    Điều kiện, Lặp, Bút vẽ, Di chuyển).</p>
+                                <p><b>• Bàn làm việc kéo thả:</b> Nơi ghép các khối lệnh vào bên dưới khối <i>"Khi bấm
+                                        nút chạy"</i>.</p>
+                                <p><b>• Nút chuyển đổi:</b> Chuyển đổi linh hoạt giữa <b>🎮 Khối Lệnh</b> và <b>⌨️ Gõ
+                                        Python</b>.</p>
+                            </div>
+                            <div
+                                class="mt-4 p-2 bg-blue-100/70 rounded-xl text-[11px] text-[#2b53a7] font-semibold text-center">
+                                Khối lệnh &rarr; Tự động dịch sang Python chuẩn!
+                            </div>
+                        </div>
+
+                        <!-- Col 2: Stage & Terminal (4 cols) -->
+                        <div class="md:col-span-4 flex flex-col gap-4">
+                            <!-- Canvas -->
+                            <div class="bg-[#fffdf5] border-2 border-amber-400 rounded-2xl p-4 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 border-b border-amber-200 mb-2">
+                                    <span class="font-bold text-xs text-amber-800 flex items-center gap-1.5">
+                                        <span class="text-sm">🐢</span> Sân khấu Rùa Vẽ
+                                    </span>
+                                    <span
+                                        class="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold">Trung
+                                        tâm</span>
+                                </div>
+                                <p class="text-xs text-slate-700 mb-2">Hiển thị đường nét rùa vẽ trực tiếp. Có thể dùng
+                                    chuột <b>nắm và kéo thả chú rùa</b> đến vị trí mới!</p>
+                                <div class="flex items-center justify-between text-[11px] bg-amber-50 p-2 rounded-lg">
+                                    <span class="text-amber-800 font-bold">🏁 Cờ vàng: Chạy</span>
+                                    <span class="text-red-600 font-bold">⏹️ Đỏ: Dừng</span>
+                                    <span class="text-sky-600 font-bold">🔄 Reset</span>
+                                </div>
+                            </div>
+                            <!-- Terminal -->
+                            <div class="bg-slate-900 border-2 border-slate-800 rounded-2xl p-4 text-emerald-400">
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-700 mb-2">
+                                    <span class="font-bold text-xs text-slate-300 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-terminal"></i> Màn hình Terminal
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-400 mb-1">Hiển thị văn bản in ra (`print()`).</p>
+                                <div class="font-mono text-[11px] text-emerald-400 bg-black/40 p-2 rounded-lg">
+                                    &gt; Sẵn sàng nhận lệnh!
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Col 3: Right Tabs & Variables (3 cols) -->
+                        <div class="md:col-span-3 flex flex-col gap-4">
+                            <div class="bg-white border-2 border-[#2b53a7] rounded-2xl p-4 shadow-xs">
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-200 mb-2">
+                                    <span class="font-bold text-xs text-[#2b53a7] flex items-center gap-1.5">
+                                        <i class="fa-solid fa-folder-open"></i> Tab Phụ Trợ
+                                    </span>
+                                    <span
+                                        class="text-[10px] bg-indigo-600 text-white px-2 py-0.5 rounded-full font-bold">Cột
+                                        Phải</span>
+                                </div>
+                                <ul class="text-xs text-slate-700 space-y-1.5">
+                                    <li>🐍 <b>Tab Python:</b> Xem code Python sinh ra theo thời gian thực.</li>
+                                    <li>💡 <b>Tab Giải thích:</b> Diễn giải từng bước thuật toán bằng tiếng Việt.</li>
+                                    <li>🎯 <b>Tab Nhiệm vụ:</b> Đề bài thử thách đang làm.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Magic Chests -->
+                            <div
+                                class="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-4">
+                                <div class="flex items-center space-x-1.5 text-amber-800 font-bold text-xs mb-1.5">
+                                    <i class="fa-solid fa-gem text-amber-500"></i>
+                                    <span>Rương Biến Số (Magic)</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 leading-snug">
+                                    Hiển thị trực tiếp giá trị của các biến trong bộ nhớ máy tính khi chương trình chạy!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: BLOCK VS CODE MODE -->
+            <section id="modes" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-3 pb-3 border-b-2 border-slate-200">
+                    <div
+                        class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-800 playful-font">2. Hai Chế Độ Học Tập: Khối
+                            Lệnh & Gõ Python</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">Linh hoạt thích ứng cho cả học sinh
+                            tiểu học và THCS/THPT</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Block Mode Card -->
+                    <div class="bg-white rounded-3xl border-2 border-[#2b53a7]/30 p-6 shadow-sm space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-3xl">🎮</span>
+                            <div>
+                                <h3 class="font-bold text-base text-[#2b53a7]">Chế Độ Khối Lệnh (Blockly)</h3>
+                                <p class="text-xs text-slate-500 font-medium">Trực quan, không sợ sai chính tả</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Người học kéo thả các khối lệnh từ danh mục bên trái và gắn vào khối <b>"Khi bấm nút
+                                chạy"</b>. Khối lệnh tự động kiểm tra tương thích kiểu dữ liệu (số chỉ gắn vào số, logic
+                            chỉ gắn vào điều kiện), giúp hình thành tư duy thuật toán vững chắc mà không bị cản trở bởi
+                            lỗi cú pháp gõ nhầm.
+                        </p>
+                        <div class="p-3 bg-blue-50 rounded-xl border border-blue-100 text-xs text-blue-900 space-y-1">
+                            <div class="font-bold">✨ Điểm nổi bật:</div>
+                            <div>• Cuộn mượt liên tục qua 7 danh mục Scratch.</div>
+                            <div>• Hỗ trợ phóng to / thu nhỏ bàn làm việc bằng chuột.</div>
+                            <div>• Mã Python bên phải tự động sinh ra từng dòng tương ứng.</div>
+                        </div>
+                    </div>
+
+                    <!-- Python Mode Card -->
+                    <div class="bg-white rounded-3xl border-2 border-amber-300 p-6 shadow-sm space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-3xl">⌨️</span>
+                            <div>
+                                <h3 class="font-bold text-base text-amber-700">Chế Độ Gõ Python Trực Tiếp</h3>
+                                <p class="text-xs text-slate-500 font-medium">Soạn thảo như lập trình viên chuyên nghiệp
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Dành cho các bạn muốn nâng cao kỹ năng gõ code thực thụ. Hệ thống tích hợp các công nghệ
+                            thông minh hỗ trợ người mới bắt đầu:
+                        </p>
+                        <div
+                            class="p-3 bg-amber-50/80 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-1.5">
+                            <div>• <b>Tự động thụt lề (Auto Indent):</b> Khi nhấn <kbd
+                                    class="bg-white px-1.5 py-0.5 rounded border border-amber-300 font-mono text-[10px]">Enter</kbd>
+                                sau dấu hai chấm <code>:</code>, hệ thống tự động lùi 4 khoảng trắng.</div>
+                            <div>• <b>Phím Tab thông minh:</b> Bấm <kbd
+                                    class="bg-white px-1.5 py-0.5 rounded border border-amber-300 font-mono text-[10px]">Tab</kbd>
+                                để thụt vào, <kbd
+                                    class="bg-white px-1.5 py-0.5 rounded border border-amber-300 font-mono text-[10px]">Shift+Tab</kbd>
+                                để lùi ra.</div>
+                            <div>• <b>Gợi ý cú pháp (Syntax CheatSheet):</b> Panel bên cạnh cung cấp 28 mẫu lệnh Python
+                                có sẵn, kèm nút chèn code nhanh.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: STAGE & TURTLE -->
+            <section id="stage" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-3 pb-3 border-b-2 border-slate-200">
+                    <div
+                        class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl">
+                        <span>🐢</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-800 playful-font">3. Sân Khấu & Nhân Vật Rùa
+                            Thông Minh</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">Không gian đồ họa tương tác cao, mô
+                            phỏng thư viện turtle của Python</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl border-2 border-[#cbdbea] p-6 sm:p-8 shadow-sm space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                            <div class="flex items-center space-x-2 text-slate-800 font-bold text-sm">
+                                <span class="text-xl">🏁</span>
+                                <span>Lá Cờ Vàng (Chạy)</span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Bắt đầu thông dịch toàn bộ mã và thực thi trên sân khấu. Từng nét vẽ của rùa sẽ xuất
+                                hiện mượt mà theo thời gian thực.
+                            </p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                            <div class="flex items-center space-x-2 text-slate-800 font-bold text-sm">
+                                <span class="text-xl">⏹️</span>
+                                <span>Nút Dừng (Stop)</span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Dừng ngay lập tức hoạt ảnh và các câu lệnh đang chạy nếu bạn nhận thấy chương trình đang
+                                vẽ sai hoặc cần chỉnh sửa lại.
+                            </p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                            <div class="flex items-center space-x-2 text-slate-800 font-bold text-sm">
+                                <span class="text-xl">🔄</span>
+                                <span>Khôi Phục Gốc (Reset)</span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Đưa chú Rùa trở về chính giữa sân khấu (tọa độ gốc x=0, y=0), hướng mặt sang phải (0
+                                độ) và tẩy sạch toàn bộ nét vẽ cũ.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Highlight Features of Canvas -->
+                    <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-3">
+                        <h4 class="font-bold text-emerald-900 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i>
+                            Các tính năng đặc biệt trên Sân khấu:
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-emerald-800">
+                            <div>• <b>Kéo thả nhân vật:</b> Dùng chuột hoặc ngón tay (trên màn cảm ứng) để kéo chú rùa
+                                tới điểm xuất phát tùy ý trước khi bấm chạy.</div>
+                            <div>• <b>Thanh tốc độ vẽ (Speed 1 - 10):</b> Kéo về mức 1 để xem rùa bò siêu chậm phục vụ
+                                quan sát vòng lặp, hoặc kéo lên mức 10 để vẽ xong tức thì.</div>
+                            <div>• <b>Bong bóng nói chuyện:</b> Khi dùng lệnh `print()`, chú rùa sẽ hiện một bong bóng
+                                hội thoại ngộ nghĩnh trên đầu kèm nội dung văn bản.</div>
+                            <div>• <b>Đổi lốt nhân vật:</b> Dễ dàng đổi sang Chú Mèo 🐱, Bé Thỏ 🐰, Chú Ong 🐝 hoặc Tên
+                                Lửa 🚀 với lệnh <code>turtle.shape()</code>!</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: TERMINAL & I/O -->
+            <section id="terminal" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-3 pb-3 border-b-2 border-slate-200">
+                    <div
+                        class="w-10 h-10 rounded-2xl bg-slate-200 text-slate-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-terminal"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-800 playful-font">4. Cửa Sổ Terminal & Nhập
+                            Xuất Dữ Liệu</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">Kênh giao tiếp kinh điển của ngôn ngữ
+                            Python với người dùng</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl border-2 border-[#cbdbea] p-6 sm:p-8 shadow-sm space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Print Explanation -->
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
+                                <i class="fa-solid fa-print"></i>
+                                <span>Xuất dữ liệu: Lệnh <code>print()</code></span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Dùng khối <b>"In ra màn hình"</b>. Bất kỳ giá trị nào (văn bản, kết quả phép tính, giá
+                                trị biến) được truyền vào khối này sẽ lập tức in ra một dòng mới trong cửa sổ Terminal.
+                            </p>
+                            <div class="bg-slate-900 rounded-xl p-3 text-white font-mono text-xs">
+                                <span class="text-emerald-400">print</span>(<span class="text-amber-300">"Xin chào Sao
+                                    Việt!"</span>)<br>
+                                <span class="text-slate-500"># Kết quả: Xin chào Sao Việt!</span>
+                            </div>
+                        </div>
+
+                        <!-- Input Explanation -->
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
+                                <i class="fa-solid fa-keyboard"></i>
+                                <span>Nhập dữ liệu: Lệnh <code>input()</code></span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Dùng khối <b>"Hỏi và đợi nhập"</b>. Khi chạy đến lệnh này, chương trình sẽ mở một hộp
+                                thoại đẹp mắt yêu cầu người dùng nhập thông tin và chờ nhấn xác nhận trước khi tiếp tục
+                                tính toán.
+                            </p>
+                            <div class="bg-slate-900 rounded-xl p-3 text-white font-mono text-xs">
+                                ten = <span class="text-emerald-400">input</span>(<span class="text-amber-300">"Bạn tên
+                                    gì?"</span>)<br>
+                                <span class="text-emerald-400">print</span>(<span class="text-amber-300">"Chào bạn
+                                    "</span> + ten)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: MAGIC VARIABLES -->
+            <section id="magic-vars" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-3 pb-3 border-b-2 border-slate-200">
+                    <div
+                        class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-800 playful-font">5. Rương Kho Báu Biến Số
+                            (Magic Variables)</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">Bí kíp giúp học sinh trực quan hóa bộ
+                            nhớ máy tính (RAM)</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl border-2 border-amber-300 p-6 sm:p-8 shadow-sm space-y-4">
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Biến số thường là khái niệm trừu tượng khó hiểu với người mới. SaoVietPyScratch giải quyết vấn
+                        đề
+                        này bằng <b>"Rương kho báu biến số"</b> ở góc dưới bên phải màn hình:
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                        <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-4 text-center space-y-2">
+                            <div class="text-2xl">📦</div>
+                            <div class="font-bold text-xs text-amber-900">Chiếc hộp mang tên</div>
+                            <p class="text-[11px] text-slate-600">Mỗi khi bạn tạo một biến (ví dụ <code>diem_so</code>,
+                                <code>ten</code>), một chiếc rương riêng biệt sẽ xuất hiện.
+                            </p>
+                        </div>
+                        <div class="bg-indigo-50/70 border border-indigo-200 rounded-2xl p-4 text-center space-y-2">
+                            <div class="text-2xl">⚡</div>
+                            <div class="font-bold text-xs text-indigo-900">Cập nhật thời gian thực</div>
+                            <p class="text-[11px] text-slate-600">Mỗi khi giá trị biến thay đổi qua vòng lặp hoặc phép
+                                gán, con số bên trong rương sẽ nhảy số tương ứng ngay lập tức.</p>
+                        </div>
+                        <div class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 text-center space-y-2">
+                            <div class="text-2xl">🔍</div>
+                            <div class="font-bold text-xs text-emerald-900">Truy vết gỡ lỗi (Debug)</div>
+                            <p class="text-[11px] text-slate-600">Học sinh dễ dàng nhìn thấy giá trị biến đếm
+                                <code>i</code> từ 1 lên 10 mà không cần phải đoán mò.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: BLOCKS DICTIONARY (CORE ENCYCLOPEDIA) -->
+            <section id="blocks-dictionary" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center justify-between pb-3 border-b-2 border-slate-200 flex-wrap gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="w-10 h-10 rounded-2xl bg-pink-100 text-pink-700 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-black text-slate-800 playful-font">6. Từ Điển Toàn Bộ
+                                Khối Lệnh (26 Khối)</h2>
+                            <p class="text-xs sm:text-sm text-slate-500 font-medium">Tra cứu chi tiết chức năng, mã
+                                Python tương ứng và ví dụ minh họa</p>
+                        </div>
+                    </div>
+                    <span id="dictionary-counter"
+                        class="bg-[#2b53a7] text-white text-xs font-bold px-3 py-1 rounded-full shadow-xs">
+                        Hiển thị: 26 khối
+                    </span>
+                </div>
+
+                <!-- Interactive Filter & Search Controls -->
+                <div class="bg-white rounded-2xl border-2 border-[#cbdbea] p-4 shadow-sm space-y-3">
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <i
+                            class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="block-search-input" oninput="filterBlocks()"
+                            placeholder="Gõ từ khóa để lọc khối (ví dụ: tiến, lùi, tròn, vòng lặp, print, if, int...)..."
+                            class="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#2b53a7] focus:bg-white text-slate-800 placeholder:text-slate-400 transition-all">
+                    </div>
+
+                    <!-- Category Filter Buttons -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                        <button onclick="filterCategory('all', this)"
+                            class="cat-filter-btn px-3 py-1.5 rounded-full font-bold bg-[#2b53a7] text-white shadow-xs shrink-0 transition-all">
+                            Tất cả (26)
+                        </button>
+                        <button onclick="filterCategory('io', this)"
+                            class="cat-filter-btn px-3 py-1.5 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition-all"
+                            data-cat="io">
+                            <span class="w-2 h-2 rounded-full inline-block mr-1 bg-[#06b6d4]"></span>In ấn / Nhập liệu
+                        </button>
+                        <button onclick="filterCategory('vars', this)"
+                            class="cat-filter-btn px-3 py-1.5 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition-all"
+                            data-cat="vars">
+                            <span class="w-2 h-2 rounded-full inline-block mr-1 bg-[#14b8a6]"></span>Biến số
+                        </button>
+                        <button onclick="filterCategory('math', this)"
+                            class="cat-filter-btn px-3 py-1.5 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition-all"
+                            data-cat="math">
+                            <span class="w-2 h-2 rounded-full inline-block mr-1 bg-[#3b82f6]"></span>Toán số
+                        </button>
+                        <button onclick="filterCategory('logic', this)"
+                            class="cat-filter-btn px-3 py-1.5 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition-all"
+                            data-cat="logic">
+                            <span class="w-2 h-2 rounded-full inline-block mr-1 bg-[#f59e0b]"></span>Điều kiện
+                        </button>
+                        <button onclick="filterCategory('loop', this)"
+                            class="cat-filter-btn px-3 py-1.5 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition-all"
+                            data-cat="loop">
+                            <span class="w-2 h-2 rounded-full inline-block mr-1 bg-[#8b5cf6]"></span>Vòng lặp
+                        </button>
+                        <button onclick="filterCategory('pen', this)"
+                            class="cat-filter-btn px-3 py-1.5 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition-all"
+                            data-cat="pen">
+                            <span class="w-2 h-2 rounded-full inline-block mr-1 bg-[#ec4899]"></span>Bút vẽ
+                        </button>
+                        <button onclick="filterCategory('move', this)"
+                            class="cat-filter-btn px-3 py-1.5 rounded-full font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 shrink-0 transition-all"
+                            data-cat="move">
+                            <span class="w-2 h-2 rounded-full inline-block mr-1 bg-[#10b981]"></span>Di chuyển
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cards Grid Container -->
+                <div id="blocks-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <!-- ==================== NHÓM 1: IN ẤN & NHẬP LIỆU ==================== -->
+                    <!-- Block: py_print -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="io" data-keywords="in ấn print xuat man hinh text py_print">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#06b6d4]">
+                                <i class="fa-solid fa-comment-dots mr-1.5"></i> In ra màn hình
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Lệnh Xuất</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">print("Xin chào bạn!")</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Xuất dữ liệu ra cửa sổ Terminal và đồng thời tạo bong bóng thoại ngộ nghĩnh trên đầu chú
+                            Rùa.
+                        </p>
+                        <div class="bg-cyan-50/60 p-2.5 rounded-xl border border-cyan-100 text-[11px] text-cyan-900">
+                            <b>Ví dụ:</b> <code>print("Điểm của bạn là: " + str(diem))</code>
+                        </div>
+                    </div>
+
+                    <!-- Block: py_input -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="io" data-keywords="hoi va doi nhap input nhap lieu text py_input">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#0ea5e9]">
+                                <i class="fa-solid fa-keyboard mr-1.5"></i> Hỏi và đợi nhập
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Lệnh Nhập</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">ten = input("Tên bạn là gì? ")</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Tạm dừng chương trình, mở hộp thoại yêu cầu người dùng gõ câu trả lời và trả về giá trị dạng
+                            chuỗi ký tự (str).
+                        </p>
+                        <div class="bg-sky-50/60 p-2.5 rounded-xl border border-sky-100 text-[11px] text-sky-900">
+                            <b>Ví dụ:</b> <code>ten = input("Bạn tên gì?")</code>
+                        </div>
+                    </div>
+
+                    <!-- Block: text -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="io" data-keywords="chuoi chu ky tu text string">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#06b6d4]">
+                                <i class="fa-solid fa-quote-left mr-1.5"></i> Chuỗi chữ ("...")
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Dữ liệu Chuỗi</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">"Xin chào"</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Khối chứa văn bản thuần túy được đặt trong cặp dấu nháy kép. Có thể chứa chữ tiếng Việt có
+                            dấu và biểu tượng cảm xúc.
+                        </p>
+                        <div class="bg-cyan-50/60 p-2.5 rounded-xl border border-cyan-100 text-[11px] text-cyan-900">
+                            <b>Lưu ý:</b> Trong Python, chuỗi đặt giữa dấu nháy đơn <code>'...'</code> hoặc nháy kép
+                            <code>"..."</code>.
+                        </div>
+                    </div>
+
+                    <!-- Block: text_join -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="io" data-keywords="ghep chuoi noi chuoi text_join f-string concatenate">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#06b6d4]">
+                                <i class="fa-solid fa-link mr-1.5"></i> Ghép chuỗi văn bản
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Nối Chuỗi</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">f"Chào {ten}, điểm của bạn là {diem}"</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Ghép nối nhiều đoạn chữ hoặc biến số lại với nhau. Hệ thống tự động chuyển đổi sang f-string
+                            chuẩn mực và hiện đại của Python.
+                        </p>
+                        <div class="bg-cyan-50/60 p-2.5 rounded-xl border border-cyan-100 text-[11px] text-cyan-900">
+                            <b>Ví dụ:</b> Ghép <code>"Chào "</code> và biến <code>ten</code> &rarr;
+                            <code>f"Chào {ten}"</code>
+                        </div>
+                    </div>
+
+                    <!-- ==================== NHÓM 2: BIẾN SỐ ==================== -->
+                    <!-- Block: variables_set -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="vars" data-keywords="gan bien so variables_set dat gia tri =">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#14b8a6]">
+                                <i class="fa-solid fa-box-archive mr-1.5"></i> Đặt biến số = ...
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Phép Gán</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">diem = 100</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Lưu một giá trị vào bộ nhớ máy tính dưới một tên gọi. Giá trị này sẽ lập tức hiển thị trên
+                            Rương Kho Báu Biến Số.
+                        </p>
+                        <div class="bg-teal-50/60 p-2.5 rounded-xl border border-teal-100 text-[11px] text-teal-900">
+                            <b>Ví dụ:</b> <code>diem = 100</code> hoặc <code>buoc = buoc + 10</code>
+                        </div>
+                    </div>
+
+                    <!-- Block: variables_get -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="vars" data-keywords="lay bien so variables_get doc gia tri">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#14b8a6]">
+                                <i class="fa-solid fa-tag mr-1.5"></i> Lấy giá trị biến
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Đọc Biến</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">diem</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Lấy giá trị hiện tại của biến số để gắn vào các phép tính toán, câu lệnh điều kiện hoặc lệnh
+                            di chuyển rùa.
+                        </p>
+                        <div class="bg-teal-50/60 p-2.5 rounded-xl border border-teal-100 text-[11px] text-teal-900">
+                            <b>Ví dụ:</b> <code>turtle.forward(buoc)</code>
+                        </div>
+                    </div>
+
+                    <!-- ==================== NHÓM 3: TOÁN SỐ ==================== -->
+                    <!-- Block: math_number -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="math" data-keywords="so math_number so nguyen so thap phan 0 1 2">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#3b82f6]">
+                                <i class="fa-solid fa-hashtag mr-1.5"></i> Số (0, 1, 2, ...)
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Số Học</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">100</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Khối đại diện cho một hằng số học. Có thể nhập số nguyên dương, số nguyên âm (ví dụ: -50)
+                            hoặc số thập phân với dấu chấm (ví dụ: 12.5).
+                        </p>
+                    </div>
+
+                    <!-- Block: math_arithmetic -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="math"
+                        data-keywords="phep tinh cong tru nhan chia luy thua math_arithmetic + - * /">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#3b82f6]">
+                                <i class="fa-solid fa-calculator mr-1.5"></i> Phép tính (+, -, ×, :, ^)
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Toán Tử</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">tong = a + b</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Thực hiện các phép toán cơ bản giữa hai số. Phép nhân trong Python là dấu sao
+                            <code>*</code>, phép chia là dấu xuyệt <code>/</code>, lũy thừa là hai dấu sao
+                            <code>**</code>.
+                        </p>
+                    </div>
+
+                    <!-- Block: py_to_int & py_to_float -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="math"
+                        data-keywords="ep kieu doi so nguyen thap phan int float py_to_int py_to_float">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#6366f1]">
+                                <i class="fa-solid fa-shuffle mr-1.5"></i> Đổi thành số (int / float)
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Ép Kiểu Dữ Liệu</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">tuoi = int(input("Nhập tuổi: "))</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Khi nhận kết quả từ <code>input()</code>, dữ liệu luôn là chuỗi ký tự. Dùng khối này để
+                            chuyển chuỗi thành số nguyên (int) hoặc số thập phân (float) trước khi tính toán.
+                        </p>
+                    </div>
+
+                    <!-- ==================== NHÓM 4: ĐIỀU KIỆN & LOGIC ==================== -->
+                    <!-- Block: controls_if -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="logic" data-keywords="dieu kien neu thi neu khong if elif else controls_if">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#f59e0b]">
+                                <i class="fa-solid fa-code-branch mr-1.5"></i> Nếu ... thì (if / else)
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Rẽ Nhánh</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-3 rounded-xl flex items-start justify-between">
+                            <pre class="snippet-text font-mono leading-relaxed overflow-x-auto">if diem &gt;= 5:
+    print("Đỗ")
+else:
+    print("Học lại")</pre>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800 shrink-0 ml-2 mt-0.5"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Kiểm tra một điều kiện logic: Nếu đúng (True) thì thực hiện nhóm lệnh bên trong, nếu sai
+                            (False) có thể thực hiện nhánh "nếu không thì" (else). Bấm biểu tượng bánh răng ⚙️ trên khối
+                            để thêm nhánh "hoặc nếu" (elif).
+                        </p>
+                        <div class="bg-amber-50/60 p-2.5 rounded-xl border border-amber-100 text-[11px] text-amber-900">
+                            <b>Ví dụ kiểm tra xếp loại:</b>
+                            <pre class="font-mono mt-1 text-slate-800 text-[11px] leading-relaxed">if diem &gt;= 8:
+    print("Học sinh Giỏi")
+elif diem &gt;= 6.5:
+    print("Học sinh Khá")
+else:
+    print("Cố gắng thêm nhé!")</pre>
+                        </div>
+                    </div>
+
+                    <!-- Block: logic_compare -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="logic"
+                        data-keywords="so sanh bang lon hon nho hon logic_compare == != < > <= >=">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#f59e0b]">
+                                <i class="fa-solid fa-scale-balanced mr-1.5"></i> So sánh (==, &ne;, &lt;, &gt;)
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Toán Tử So Sánh</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">n % 2 == 0</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            So sánh hai giá trị và trả về Đúng (True) hoặc Sai (False). Lưu ý trong Python: Phép so sánh
+                            bằng nhau là hai dấu bằng liên tiếp <code>==</code> (khác với một dấu bằng <code>=</code> là
+                            phép gán).
+                        </p>
+                    </div>
+
+                    <!-- Block: logic_operation -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="logic" data-keywords="logic va hoac and or not logic_operation">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#f59e0b]">
+                                <i class="fa-solid fa-circle-nodes mr-1.5"></i> Phép logic (VÀ / HOẶC)
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Toán Tử Logic</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">diem >= 8 and hanh_kiem == "Tot"</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Kết hợp nhiều điều kiện: <b>and</b> (cả hai đều đúng thì mới đúng), <b>or</b> (chỉ cần một
+                            trong hai đúng là đúng).
+                        </p>
+                    </div>
+
+                    <!-- ==================== NHÓM 5: VÒNG LẶP ==================== -->
+                    <!-- Block: controls_for -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="loop" data-keywords="vong lap dem controls_for for in range lap bien dem">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#8b5cf6]">
+                                <i class="fa-solid fa-arrows-rotate mr-1.5"></i> Vòng lặp đếm (for...range)
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Lặp Số Lần</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-3 rounded-xl flex items-start justify-between">
+                            <pre class="snippet-text font-mono leading-relaxed overflow-x-auto">for i in range(1, 11):
+    print(i)</pre>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800 shrink-0 ml-2 mt-0.5"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Khối lặp kinh điển trong Python. Tự động tăng biến đếm <code>i</code> từ giá trị bắt đầu đến
+                            kết thúc theo bước nhảy quy định. Dùng vẽ đa giác đều, vẽ hoa sen, bảng cửu chương.
+                        </p>
+                        <div class="bg-purple-50/60 p-2.5 rounded-xl border border-purple-100 text-[11px] text-purple-900">
+                            <b>Ví dụ vẽ hình vuông 4 cạnh:</b>
+                            <pre class="font-mono mt-1 text-slate-800 text-[11px] leading-relaxed">for i in range(4):
+    turtle.forward(100)
+    turtle.right(90)</pre>
+                        </div>
+                    </div>
+
+                    <!-- Block: controls_whileUntil -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="loop" data-keywords="lap trong khi while controls_whileUntil">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#8b5cf6]">
+                                <i class="fa-solid fa-rotate mr-1.5"></i> Lặp trong khi (while)
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Lặp Điều Kiện</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-3 rounded-xl flex items-start justify-between">
+                            <pre class="snippet-text font-mono leading-relaxed overflow-x-auto">while n &gt; 0:
+    print(n)
+    n = n - 1</pre>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800 shrink-0 ml-2 mt-0.5"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Tiếp tục lặp đi lặp lại khối lệnh chừng nào điều kiện vẫn còn đúng. Luôn nhớ cập nhật biến
+                            bên trong vòng lặp để tránh rơi vào vòng lặp vô tận!
+                        </p>
+                        <div class="bg-purple-50/60 p-2.5 rounded-xl border border-purple-100 text-[11px] text-purple-900">
+                            <b>Ví dụ đếm ngược phóng tên lửa:</b>
+                            <pre class="font-mono mt-1 text-slate-800 text-[11px] leading-relaxed">dem = 5
+while dem &gt; 0:
+    print(dem)
+    dem = dem - 1
+print("Phóng! 🚀")</pre>
+                        </div>
+                    </div>
+
+                    <!-- ==================== NHÓM 6: BÚT VẼ ==================== -->
+                    <!-- Block: turtle_pen -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="pen" data-keywords="but ve ha but nhac but pendown penup turtle_pen">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#ec4899]">
+                                <i class="fa-solid fa-pen-nib mr-1.5"></i> Hạ bút / Nhấc bút
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Trạng Thái Bút</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.pendown() # hoặc turtle.penup()</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <b>Hạ bút (pendown):</b> Bắt đầu để lại nét vẽ khi di chuyển. <b>Nhấc bút (penup):</b> Di
+                            chuyển rùa đến vị trí khác mà không làm bẩn giấy vẽ.
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_color -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="pen" data-keywords="mau sac net ve mau to turtle_color pencolor fillcolor">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#db2777]">
+                                <i class="fa-solid fa-palette mr-1.5"></i> Đổi màu: Nét & Tô
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Bảng Màu</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.color("blue", "red")</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Chọn màu cho đường viền nét vẽ và màu tô kín bên trong hình bằng bảng chọn màu trực quan
+                            hoặc mã HEX / tên màu tiếng Anh.
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_bgcolor -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="pen" data-keywords="mau nen san khau background turtle_bgcolor">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#db2777]">
+                                <i class="fa-solid fa-fill-drip mr-1.5"></i> Đổi màu nền sân khấu
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Màu Nền</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.bgcolor("black")</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Đổi màu phông nền của toàn bộ sân khấu (ví dụ đổi sang màu đen để vẽ pháo hoa hoặc bầu trời
+                            sao đêm lấp lánh).
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_width -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="pen" data-keywords="kich thuoc net do day turtle_width pensize width">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#f43f5e]">
+                                <i class="fa-solid fa-paintbrush mr-1.5"></i> Đổi kích thước nét
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Độ Dày Nét</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.width(5)</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Chỉnh độ dày của nét vẽ (mặc định là 3). Tăng lên 5 hoặc 10 để nét vẽ đậm đà, nổi bật hơn.
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_begin_fill & turtle_end_fill -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="pen"
+                        data-keywords="to mau bat dau ket thuc turtle_begin_fill turtle_end_fill fill">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#ec4899]">
+                                <i class="fa-solid fa-wand-magic mr-1.5"></i> Bắt đầu & Kết thúc tô màu
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Tô Kín Hình</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-3 rounded-xl flex items-start justify-between">
+                            <pre class="snippet-text font-mono leading-relaxed overflow-x-auto">turtle.begin_fill()
+# Lệnh vẽ hình khép kín...
+turtle.end_fill()</pre>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800 shrink-0 ml-2 mt-0.5"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Đặt <b>Bắt đầu tô màu</b> trước khi vẽ hình khép kín (như hình vuông, ngôi sao, bông hoa),
+                            và đặt <b>Kết thúc tô màu</b> sau khi vẽ xong để phủ kín màu tô vào trong.
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_shape -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="pen" data-keywords="doi hinh dang nhan vat rua meo tho ong turtle_shape">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#8b5cf6]">
+                                <i class="fa-solid fa-face-smile mr-1.5"></i> Đổi hình dáng nhân vật
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Hóa Trang</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.shape("rabbit")</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Thay đổi avatar người dẫn đường trên sân khấu: Chú Rùa 🐢, Mèo con 🐱, Chú Thỏ 🐰, Chú Ong
+                            🐝, hoặc Tên Lửa 🚀.
+                        </p>
+                    </div>
+
+                    <!-- ==================== NHÓM 7: DI CHUYỂN & VẼ HÌNH ==================== -->
+                    <!-- Block: turtle_forward -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="move" data-keywords="tien buoc di thang turtle_forward forward fd">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#10b981]">
+                                <i class="fa-solid fa-arrow-up mr-1.5"></i> Tiến ... bước
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Di Chuyển Thẳng</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.forward(100)</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Rùa đi thẳng về phía trước theo hướng đang nhìn một số bước (pixel) chỉ định. Nếu đang hạ
+                            bút, sẽ để lại một đường thẳng.
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_backward -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="move" data-keywords="lui buoc di lui turtle_backward backward bk">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#059669]">
+                                <i class="fa-solid fa-arrow-down mr-1.5"></i> Lùi ... bước
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Di Chuyển Lùi</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.backward(50)</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Rùa đi lùi về phía sau mà không làm thay đổi hướng nhìn của đầu rùa.
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_right -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="move" data-keywords="xoay phai re phai turtle_right right rt deg">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#8b5cf6]">
+                                <i class="fa-solid fa-rotate-right mr-1.5"></i> Xoay phải ... độ ↻
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Xoay Thuận Kim Đồng Hồ</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.right(90)</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Quay hướng nhìn của rùa sang bên phải theo chiều kim đồng hồ một góc tính bằng độ (ví dụ 90°
+                            cho góc vuông, 144° cho ngôi sao).
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_left -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="move" data-keywords="xoay trai re trai turtle_left left lt deg">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#a78bfa]">
+                                <i class="fa-solid fa-rotate-left mr-1.5"></i> Xoay trái ... độ ↺
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Xoay Ngược Kim Đồng Hồ</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.left(90)</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Quay hướng nhìn của rùa sang bên trái ngược chiều kim đồng hồ.
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_circle -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="move" data-keywords="ve hinh tron ban kinh turtle_circle circle">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#10b981]">
+                                <i class="fa-solid fa-circle-notch mr-1.5"></i> Vẽ hình tròn bán kính ...
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Vẽ Đường Tròn</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.circle(60)</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Rùa tự động lượn thành một đường tròn hoàn chỉnh với bán kính (r) đã chọn. Tâm hình tròn nằm
+                            về bên trái hướng rùa đang nhìn.
+                        </p>
+                    </div>
+
+                    <!-- Block: turtle_home & turtle_clear -->
+                    <div class="block-card bg-white rounded-3xl border-2 border-slate-200 p-5 shadow-xs space-y-3"
+                        data-category="move" data-keywords="ve trung tam xoa tranh turtle_home turtle_clear home clear">
+                        <div class="flex items-center justify-between">
+                            <span class="scratch-pill bg-[#14b8a6]">
+                                <i class="fa-solid fa-house mr-1.5"></i> Về Trung tâm & Xóa tranh
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400">Lệnh Dọn Dẹp</span>
+                        </div>
+                        <div
+                            class="code-box code-font text-xs bg-slate-900 text-emerald-400 p-2.5 rounded-xl flex items-center justify-between">
+                            <span class="snippet-text">turtle.home() # và turtle.clear()</span>
+                            <button onclick="copyCardSnippet(this)"
+                                class="text-slate-400 hover:text-white text-[11px] px-2 py-0.5 rounded bg-slate-800"
+                                title="Chép mã">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <b>home():</b> Đưa rùa về tọa độ trung tâm (0,0) và chỉnh lại góc nhìn về 0°.
+                            <b>clear():</b> Tẩy sạch các nét vẽ trên màn hình.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- Empty search result state -->
+                <div id="empty-search-state"
+                    class="hidden bg-white rounded-3xl border-2 border-dashed border-slate-300 p-12 text-center space-y-3">
+                    <div class="text-4xl">🔍</div>
+                    <h3 class="font-bold text-slate-700 text-base">Không tìm thấy khối lệnh phù hợp!</h3>
+                    <p class="text-xs text-slate-500">Hãy thử tìm với từ khóa khác như "tiến", "vòng lặp", "màu",
+                        "print", hoặc bấm "Tất cả".</p>
+                    <button onclick="resetFilters()"
+                        class="px-4 py-2 bg-[#2b53a7] text-white rounded-xl text-xs font-bold hover:bg-[#1f3d80] transition-all">
+                        Xem tất cả các khối
+                    </button>
+                </div>
+            </section>
+
+            <!-- SECTION 7: 14 CHALLENGES SYSTEM -->
+            <section id="challenges" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-3 pb-3 border-b-2 border-slate-200">
+                    <div
+                        class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-800 playful-font">7. Hệ Thống 14 Thử Thách
+                            Thông Minh</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">Đấu trường rèn luyện từ căn bản đến
+                            bậc thầy sáng tạo</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl border-2 border-[#cbdbea] p-6 sm:p-8 shadow-sm space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                        <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-1">
+                            <span class="w-3 h-3 rounded-full inline-block bg-emerald-500"></span>
+                            <div class="font-bold text-xs text-emerald-900">Cấp độ 1</div>
+                            <div class="text-[11px] text-emerald-700 font-semibold">Nhập môn Rùa vẽ</div>
+                            <p class="text-[10px] text-slate-500">Thử thách 1 &rarr; 3</p>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 text-center space-y-1">
+                            <span class="w-3 h-3 rounded-full inline-block bg-sky-500"></span>
+                            <div class="font-bold text-xs text-sky-900">Cấp độ 2</div>
+                            <div class="text-[11px] text-sky-700 font-semibold">Hình học cơ bản</div>
+                            <p class="text-[10px] text-slate-500">Thử thách 4 &rarr; 6</p>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-indigo-50 border border-indigo-200 text-center space-y-1">
+                            <span class="w-3 h-3 rounded-full inline-block bg-indigo-500"></span>
+                            <div class="font-bold text-xs text-indigo-900">Cấp độ 3</div>
+                            <div class="text-[11px] text-indigo-700 font-semibold">Vòng lặp thần kỳ</div>
+                            <p class="text-[10px] text-slate-500">Thử thách 7 &rarr; 9</p>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-purple-50 border border-purple-200 text-center space-y-1">
+                            <span class="w-3 h-3 rounded-full inline-block bg-purple-500"></span>
+                            <div class="font-bold text-xs text-purple-900">Cấp độ 4</div>
+                            <div class="text-[11px] text-purple-700 font-semibold">Điều kiện & Logic</div>
+                            <p class="text-[10px] text-slate-500">Thử thách 10 &rarr; 11</p>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-pink-50 border border-pink-200 text-center space-y-1">
+                            <span class="w-3 h-3 rounded-full inline-block bg-pink-500"></span>
+                            <div class="font-bold text-xs text-pink-900">Cấp độ 5</div>
+                            <div class="text-[11px] text-pink-700 font-semibold">Bậc thầy sáng tạo</div>
+                            <p class="text-[10px] text-slate-500">Thử thách 12 &rarr; 14</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200 text-xs text-amber-900 space-y-2">
+                        <div class="font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-check text-amber-600"></i>
+                            Cơ chế chấm điểm tự động & Nộp bài:
+                        </div>
+                        <p class="leading-relaxed text-slate-700">
+                            Học sinh chỉ cần chọn bài trong nút <b>"Thử thách"</b> trên thanh Header. Khi bấm <b>Lá cờ
+                                vàng</b>, hệ thống sẽ tự động đối soát nét vẽ trên sân khấu và nhật ký Terminal. Nếu
+                            chính xác, màn hình sẽ bùng nổ hiệu ứng <b>Pháo hoa Confetti 🎉</b> kèm âm thanh chúc mừng
+                            chiến thắng và tự động lưu danh hiệu vào trình duyệt!
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8: SAFETY & TIPS -->
+            <section id="safety-tips" class="scroll-mt-24 space-y-6">
+                <div class="flex items-center space-x-3 pb-3 border-b-2 border-slate-200">
+                    <div
+                        class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-shield-heart"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-800 playful-font">8. Cơ Chế An Toàn & Mẹo Hay
+                        </h2>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">Bảo vệ trải nghiệm học tập không bao
+                            giờ bị gián đoạn</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-3xl border-2 border-rose-200 p-6 shadow-sm space-y-3">
+                        <div class="flex items-center space-x-2 text-rose-700 font-bold text-sm">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Bảo vệ chống lặp vô tận (Infinite Loop Guard)</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Khi học sinh vô tình viết một vòng lặp <code>while True</code> không có điều kiện dừng, các
+                            trang web thông thường sẽ bị đơ hoặc sập tab. Tuy nhiên ở SaoVietPyScratch, hệ thống tự
+                            động theo dõi và ngắt an toàn sau <b>3 giây</b>, đồng thời đưa ra lời khuyên sửa lỗi ân cần
+                            bằng tiếng Việt.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border-2 border-indigo-200 p-6 shadow-sm space-y-3">
+                        <div class="flex items-center space-x-2 text-indigo-700 font-bold text-sm">
+                            <i class="fa-solid fa-keyboard"></i>
+                            <span>Phím tắt tiện dụng khi gõ code</span>
+                        </div>
+                        <ul class="text-xs text-slate-600 space-y-1.5 leading-relaxed">
+                            <li>• <kbd class="bg-slate-100 px-1 py-0.5 rounded font-mono">Tab</kbd>: Thụt lề vào 4 dấu
+                                cách.</li>
+                            <li>• <kbd class="bg-slate-100 px-1 py-0.5 rounded font-mono">Shift + Tab</kbd>: Lùi lề ra
+                                4 dấu cách.</li>
+                            <li>• <kbd class="bg-slate-100 px-1 py-0.5 rounded font-mono">Backspace</kbd>: Tự động xóa
+                                trọn khối thụt lề 4 dấu cách.</li>
+                            <li>• <kbd class="bg-slate-100 px-1 py-0.5 rounded font-mono">Enter</kbd> sau dấu
+                                <code>:</code>: Tự động thụt lề cho khối con.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bottom Call to Action -->
+            <div
+                class="bg-gradient-to-r from-[#f89b1c] to-[#ffb84d] rounded-3xl p-8 text-center text-white shadow-lg space-y-4">
+                <h3 class="text-2xl sm:text-3xl font-black playful-font">Sẵn Sàng Bắt Đầu Chuyến Du Hành Lập Trình?</h3>
+                <p class="text-xs sm:text-sm max-w-xl mx-auto font-medium text-amber-950/80">
+                    Hãy quay lại phòng thực hành, chọn ngay thử thách đầu tiên và cùng chú Rùa vẽ nên những tác phẩm
+                    tuyệt vời nhất nhé!
+                </p>
+                <div class="pt-2">
+                    <a href="index.html"
+                        class="inline-flex items-center space-x-2 bg-[#2b53a7] hover:bg-[#1f3d80] text-white px-6 py-3 rounded-2xl font-bold text-sm sm:text-base shadow-md hover:shadow-xl transition-all transform hover:scale-105 active:scale-95 cursor-pointer">
+                        <i class="fa-solid fa-rocket mr-1"></i>
+                        <span>Vào Phòng Lập Trình Ngay 🚀</span>
+                    </a>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Floating Back to Top Button -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        class="fixed bottom-6 right-6 w-11 h-11 rounded-full bg-[#2b53a7] text-white shadow-xl flex items-center justify-center text-sm opacity-0 pointer-events-none transition-all duration-300 hover:bg-[#f89b1c] z-40"
+        title="Lên đầu trang">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-[#2b53a7] playful-font text-sm">SaoVietPyScratch 🐍</span>
+                <span>- Nền tảng học Python kéo thả hàng đầu</span>
+            </div>
+            <div>
+                © 2026 Sao Việt Educational Technology. Thiết kế cho tương lai lập trình viên nhí.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Search & Filter Scripts -->
+    <script>
+        let currentCategory = 'all';
+
+        function filterBlocks() {
+            const query = (document.getElementById('block-search-input').value || '').toLowerCase().trim();
+            const cards = document.querySelectorAll('.block-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const cat = card.getAttribute('data-category');
+                const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+                const textContent = card.innerText.toLowerCase();
+
+                const matchCat = (currentCategory === 'all' || cat === currentCategory);
+                const matchQuery = !query || keywords.includes(query) || textContent.includes(query);
+
+                if (matchCat && matchQuery) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Update badge counter
+            const counterEl = document.getElementById('dictionary-counter');
+            if (counterEl) {
+                counterEl.textContent = `Hiển thị: ${visibleCount} khối`;
+            }
+
+            // Show empty state if nothing found
+            const emptyEl = document.getElementById('empty-search-state');
+            if (emptyEl) {
+                if (visibleCount === 0) {
+                    emptyEl.classList.remove('hidden');
+                } else {
+                    emptyEl.classList.add('hidden');
+                }
+            }
+        }
+
+        function filterCategory(cat, btnElement) {
+            currentCategory = cat;
+
+            // Update active state on buttons
+            document.querySelectorAll('.cat-filter-btn').forEach(b => {
+                b.classList.remove('bg-[#2b53a7]', 'text-white');
+                b.classList.add('bg-slate-100', 'text-slate-700');
+            });
+
+            if (btnElement) {
+                btnElement.classList.remove('bg-slate-100', 'text-slate-700');
+                btnElement.classList.add('bg-[#2b53a7]', 'text-white');
+            }
+
+            filterBlocks();
+        }
+
+        function resetFilters() {
+            currentCategory = 'all';
+            const searchInput = document.getElementById('block-search-input');
+            if (searchInput) searchInput.value = '';
+            const allBtn = document.querySelector('.cat-filter-btn');
+            if (allBtn) filterCategory('all', allBtn);
+        }
+
+        function syncAndSearch(val) {
+            const mainSearch = document.getElementById('block-search-input');
+            if (mainSearch) {
+                mainSearch.value = val;
+                const dictSection = document.getElementById('blocks-dictionary');
+                if (dictSection && window.scrollY < dictSection.offsetTop - 100) {
+                    dictSection.scrollIntoView({ behavior: 'smooth' });
+                }
+                filterBlocks();
+            }
+        }
+
+        // Chép mã từ thẻ khối lệnh một cách an toàn tuyệt đối, không dùng quote trong HTML attribute
+        function copyCardSnippet(btn) {
+            const card = btn.closest('.code-box') || btn.closest('.block-card');
+            const snippetEl = card ? card.querySelector('.snippet-text') : null;
+            const text = snippetEl ? snippetEl.innerText.trim() : '';
+            if (!text) return;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Đã chép!';
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                }, 2000);
+            }).catch(err => {
+                console.error('Không thể chép:', err);
+            });
+        }
+
+        // Back to top listener & active nav highlighting
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('back-to-top');
+            if (btn) {
+                if (window.scrollY > 400) {
+                    btn.classList.remove('opacity-0', 'pointer-events-none');
+                } else {
+                    btn.classList.add('opacity-0', 'pointer-events-none');
+                }
+            }
+
+            // Highlight active sidebar navigation
+            const sections = document.querySelectorAll('main section[id]');
+            const scrollPos = window.scrollY + 120;
+
+            sections.forEach(sec => {
+                const top = sec.offsetTop;
+                const height = sec.offsetHeight;
+                const id = sec.getAttribute('id');
+                const link = document.querySelector(`#sidebar-nav a[href="#${id}"]`);
+
+                if (link) {
+                    if (scrollPos >= top && scrollPos < top + height) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
