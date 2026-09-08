@@ -63,7 +63,7 @@
 
         /* Custom Scratch-like Sidebar */
         .scratch-sidebar {
-            width: 75px;
+            width: 70px;
             background-color: #eef4fc;
             border-right: 3px solid #2b53a7;
             display: flex;
@@ -71,6 +71,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             z-index: 50;
+            transition: width 0.15s ease;
         }
 
         .scratch-category {
@@ -79,7 +80,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            padding: 10px 4px;
+            padding: 8px 3px;
             width: 100%;
             transition: background 0.1s;
             user-select: none;
@@ -90,25 +91,49 @@
         }
 
         .scratch-cat-circle {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
+            transition: all 0.15s ease;
         }
 
         .scratch-cat-text {
-            font-size: 10px;
+            font-size: 9.5px;
             text-align: center;
             font-weight: 600;
             color: #2b53a7;
         }
 
+        @media (max-width: 1399px) {
+            .scratch-sidebar {
+                width: 58px;
+            }
+            .scratch-category {
+                padding: 6px 2px;
+            }
+            .scratch-cat-circle {
+                width: 18px;
+                height: 18px;
+                margin-bottom: 2px;
+            }
+            .scratch-cat-text {
+                font-size: 8.5px;
+            }
+        }
+
         /* Flyout Titles Label */
         .blocklyFlyoutLabelText {
             font-family: 'Fredoka', sans-serif !important;
-            font-size: 14pt !important;
+            font-size: 13pt !important;
             font-weight: 700 !important;
             fill: #2b53a7 !important;
+        }
+
+        @media (max-width: 1399px) {
+            .blocklyFlyoutLabelText {
+                font-size: 11pt !important;
+            }
         }
 
         .terminal-bg {
@@ -247,6 +272,95 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #2b53a7;
         }
+
+        /* ========================================================
+           RESPONSIVE APP GRID LAYOUT
+           ======================================================== */
+        #app-main {
+            display: grid;
+            gap: 12px;
+            padding: 12px;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            flex: 1;
+            min-height: 0;
+        }
+
+        #commands-panel { grid-area: commands; }
+        #stage-panel { grid-area: stage; }
+        #terminal-panel { grid-area: terminal; }
+        #tabs-panel { grid-area: tabs; }
+        #variables-panel { grid-area: variables; }
+
+        /* 1. Mobile (< 768px): Single column stacked */
+        @media (max-width: 767px) {
+            #app-main {
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+                height: auto;
+            }
+            #commands-panel { height: 50vh; min-height: 340px; flex-shrink: 0; }
+            #stage-panel { height: 320px; flex-shrink: 0; }
+            #terminal-panel { height: 160px; flex-shrink: 0; }
+            #tabs-panel { height: 220px; flex-shrink: 0; }
+            #variables-panel { min-height: 80px; flex-shrink: 0; }
+        }
+
+        /* 2. Responsive / Half-screen (768px to 1399px)
+              Top: [Commands (Left)] [Stage (Right)]
+              Bottom: [Terminal (Left)] [Tabs (Right)]
+              Footer: [Variables (Full width across bottom)] */
+        @media (min-width: 768px) and (max-width: 1399px) {
+            #app-main {
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                grid-template-rows: minmax(280px, 1.35fr) minmax(160px, 0.65fr) auto;
+                grid-template-areas:
+                    "commands  stage"
+                    "terminal  tabs"
+                    "variables variables";
+                overflow: hidden;
+            }
+            #commands-panel, #stage-panel, #terminal-panel, #tabs-panel {
+                min-height: 0;
+                height: 100%;
+            }
+            #variables-panel {
+                min-height: 95px;
+                height: 110px;
+            }
+        }
+
+        /* 3. Wide / Fullscreen Desktop (>= 1400px)
+              3 columns: Commands | Stage + Terminal | Tabs + Variables */
+        @media (min-width: 1400px) {
+            #app-main {
+                grid-template-columns: minmax(0, 1.25fr) minmax(440px, 490px) minmax(330px, 380px);
+                grid-template-rows: minmax(0, 1fr) 200px;
+                grid-template-areas:
+                    "commands stage    tabs"
+                    "commands terminal variables";
+                overflow: hidden;
+            }
+            #commands-panel, #stage-panel, #terminal-panel, #tabs-panel, #variables-panel {
+                min-height: 0;
+                height: 100%;
+            }
+        }
+
+        /* For short height viewports (laptop / zoomed window), allow smooth scroll */
+        @media (min-width: 768px) and (max-height: 740px) {
+            #app-main {
+                overflow-y: auto !important;
+            }
+            #commands-panel, #stage-panel {
+                min-height: 280px;
+            }
+            #terminal-panel, #tabs-panel {
+                min-height: 160px;
+            }
+        }
     </style>
 </head>
 
@@ -293,30 +407,30 @@
         </div>
     </header>
 
-    <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden bg-[#f0f4fa]">
+    <main id="app-main">
 
-        <!-- Left Side: Blockly Editor Card -->
-        <section class="flex-[1.2] flex flex-col panel-card h-[45vh] lg:h-full relative">
-            <div class="bg-[#e6effc] px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0">
-                <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
-                    <i class="fa-solid fa-puzzle-piece mr-1"></i>
+        <!-- Panel 1 (Nửa trên trái): Khu vực lệnh (Blockly / Gõ Python) -->
+        <section id="commands-panel" class="panel-card flex flex-col relative min-h-0 h-full">
+            <div class="bg-[#e6effc] px-3 sm:px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0 gap-1">
+                <div class="flex items-center space-x-1.5 sm:space-x-2 text-[#2b53a7] font-bold text-xs sm:text-sm truncate">
+                    <i class="fa-solid fa-puzzle-piece mr-0.5 sm:mr-1"></i>
                     <span>Khu vực lệnh</span>
                 </div>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
                     <button id="toggle-blocks-btn" onclick="setMode('blocks')"
-                        class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#2b53a7] text-white shadow-sm border border-[#2b53a7]">
+                        class="px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-[#2b53a7] text-white shadow-sm border border-[#2b53a7] cursor-pointer">
                         🎮 Khối Lệnh
                     </button>
                     <button id="toggle-code-btn" onclick="setMode('code')"
-                        class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-[#2b53a7] hover:bg-[#d8e6f7] transition-all border border-[#cbdbea]">
+                        class="px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-white text-[#2b53a7] hover:bg-[#d8e6f7] transition-all border border-[#cbdbea] cursor-pointer">
                         ⌨️ Gõ Python
                     </button>
                 </div>
             </div>
 
-            <div class="flex-1 flex relative overflow-hidden">
+            <div class="flex-1 flex relative overflow-hidden min-h-0">
                 <!-- Custom Scratch-like Continuous Scroll Sidebar -->
-                <div id="scratch-sidebar" class="scratch-sidebar">
+                <div id="scratch-sidebar" class="scratch-sidebar shrink-0">
                     <div class="scratch-category" onclick="scrollToCategory('text')" data-color="#06b6d4">
                         <div class="scratch-cat-circle" style="background: #06b6d4;"></div>
                         <div class="scratch-cat-text">In ấn</div>
@@ -357,7 +471,7 @@
                         class="bg-[#f1f5f9] px-4 py-1.5 border-b border-slate-200 flex items-center justify-between shrink-0">
                         <span class="text-[11px] font-bold text-slate-600">✍️ Gõ mã Python của bạn vào đây:</span>
                         <button onclick="insertPythonTemplate()"
-                            class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold">
+                            class="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold cursor-pointer">
                             <i class="fa-solid fa-wand-magic-sparkles mr-0.5"></i> Chèn code mẫu
                         </button>
                     </div>
@@ -429,143 +543,145 @@
             </div>
         </section>
 
-        <!-- Middle Column: Turtle Playground & Terminal -->
-        <section id="middle-section" class="w-full lg:w-[500px] flex flex-col gap-4 shrink-0">
-            <!-- Canvas Panel Card -->
-            <div class="panel-card flex flex-col h-[360px] shrink-0 lg:h-auto lg:flex-1">
-                <div
-                    class="bg-[#e6effc] px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0">
-                    <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
-                        <i class="fa-solid fa-turtle mr-1"></i>
-                        <span>Khu vực sân khấu</span>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <button id="run-btn" onclick="runCode()"
-                            class="text-[#f89b1c] hover:text-[#d97706] bouncy-btn transition-transform"
-                            title="Chạy chương trình (Lá cờ vàng)">
-                            <i class="fa-solid fa-flag text-lg pointer-events-none"></i>
-                        </button>
-                        <button id="stop-btn" onclick="stopExecution()"
-                            class="text-red-500 hover:text-red-600 bouncy-btn transition-transform" title="Dừng">
-                            <i class="fa-solid fa-circle-stop text-lg"></i>
-                        </button>
-                        <button id="reset-btn" onclick="hardResetStage()"
-                            class="text-sky-600 hover:text-sky-500 bouncy-btn transition-transform"
-                            title="Khôi phục gốc (Về trung tâm & Xóa vẽ)">
-                            <i class="fa-solid fa-rotate-left text-lg"></i>
-                        </button>
-                        <div class="h-4 w-[1px] bg-slate-200"></div>
-                        <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wide">Tốc độ</span>
-                        <input id="speed-slider" type="range" min="1" max="10" value="5"
-                            class="w-12 accent-[#f89b1c] cursor-pointer">
-                    </div>
+        <!-- Panel 2 (Nửa trên phải): Khu vực sân khấu (Turtle Playground) -->
+        <section id="stage-panel" class="panel-card flex flex-col min-h-0 h-full">
+            <div
+                class="bg-[#e6effc] px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0">
+                <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
+                    <i class="fa-solid fa-turtle mr-1"></i>
+                    <span>Khu vực sân khấu</span>
                 </div>
-                <!-- Stage (Canvas) -->
-                <div class="flex-1 bg-[#e4e9f2] p-3 relative flex items-center justify-center overflow-hidden">
-                    <canvas id="turtle-canvas" width="600" height="340"
-                        class="max-w-full max-h-full rounded-xl border-2 border-slate-300 shadow-inner bg-[#fffdf5] block"></canvas>
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <button id="run-btn" onclick="runCode()"
+                        class="text-[#f89b1c] hover:text-[#d97706] bouncy-btn transition-transform cursor-pointer"
+                        title="Chạy chương trình (Lá cờ vàng)">
+                        <i class="fa-solid fa-flag text-lg pointer-events-none"></i>
+                    </button>
+                    <button id="stop-btn" onclick="stopExecution()"
+                        class="text-red-500 hover:text-red-600 bouncy-btn transition-transform cursor-pointer" title="Dừng">
+                        <i class="fa-solid fa-circle-stop text-lg"></i>
+                    </button>
+                    <button id="reset-btn" onclick="hardResetStage()"
+                        class="text-sky-600 hover:text-sky-500 bouncy-btn transition-transform cursor-pointer"
+                        title="Khôi phục gốc (Về trung tâm & Xóa vẽ)">
+                        <i class="fa-solid fa-rotate-left text-lg"></i>
+                    </button>
+                    <div class="h-4 w-[1px] bg-slate-200"></div>
+                    <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wide">Tốc độ</span>
+                    <input id="speed-slider" type="range" min="1" max="10" value="5"
+                        class="w-10 sm:w-12 accent-[#f89b1c] cursor-pointer">
+                </div>
+            </div>
+            <!-- Stage (Canvas) -->
+            <div class="flex-1 bg-[#e4e9f2] p-2 sm:p-3 relative flex items-center justify-center overflow-hidden min-h-0">
+                <canvas id="turtle-canvas" width="600" height="340"
+                    class="max-w-full max-h-full rounded-xl border-2 border-slate-300 shadow-inner bg-[#fffdf5] block object-contain"></canvas>
+            </div>
+        </section>
+
+        <!-- Panel 3 (Nửa dưới trái): Terminal Panel Card -->
+        <section id="terminal-panel" class="panel-card flex flex-col min-h-0 h-full">
+            <div
+                class="bg-[#e6effc] px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0">
+                <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
+                    <i class="fa-solid fa-terminal mr-1"></i>
+                    <span>Terminal</span>
+                </div>
+                <button onclick="document.getElementById('console-output').textContent=''"
+                    class="text-xs text-slate-400 hover:text-slate-600 transition-colors cursor-pointer" title="Xóa màn hình Terminal">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+            <div id="console-output"
+                class="flex-1 p-3 overflow-y-auto bg-[#f8fafc] font-mono text-[13px] leading-relaxed text-slate-800 whitespace-pre-wrap min-h-0">
+                Sẵn sàng nhận lệnh!
+            </div>
+        </section>
+
+        <!-- Panel 4 (Nửa dưới phải): Python Code & Magic Variables Tabs Card -->
+        <section id="tabs-panel" class="panel-card flex flex-col min-h-0 h-full">
+            <!-- Tabs Header -->
+            <div id="right-tabs-header"
+                class="bg-[#e6effc] px-4 pt-1.5 flex items-center justify-between border-b-3 border-[#2b53a7] shrink-0">
+                <div class="flex space-x-1">
+                    <button id="tab-code-btn" onclick="switchTab('code')"
+                        class="px-3 py-1.5 rounded-t-lg font-bold text-xs transition-all border-b-2 border-[#f89b1c] text-[#2b53a7] bg-white shadow-sm cursor-pointer">
+                        <i class="fa-brands fa-python text-[#f89b1c] mr-1"></i>Python
+                    </button>
+                    <button id="tab-explain-btn" onclick="switchTab('explain')"
+                        class="px-3 py-1.5 rounded-t-lg font-bold text-xs transition-all text-slate-500 hover:text-[#2b53a7] bg-transparent cursor-pointer">
+                        <i class="fa-solid fa-lightbulb text-[#f89b1c] mr-1"></i>Giải thích
+                    </button>
+                    <button id="tab-challenge-btn" onclick="switchTab('challenge')"
+                        class="hidden px-3 py-1.5 rounded-t-lg font-bold text-xs transition-all text-amber-700 hover:text-[#2b53a7] bg-transparent cursor-pointer">
+                        <i class="fa-solid fa-bullseye text-[#f89b1c] mr-1"></i>Nhiệm vụ
+                    </button>
                 </div>
             </div>
 
-            <!-- Terminal Panel Card -->
-            <div id="terminal-panel" class="panel-card flex flex-col h-[120px] lg:h-[200px] shrink-0">
-                <div
-                    class="bg-[#e6effc] px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0">
-                    <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
-                        <i class="fa-solid fa-terminal mr-1"></i>
-                        <span>Terminal</span>
-                    </div>
+            <div class="flex-1 relative bg-white min-h-0 overflow-hidden">
+                <div id="tab-code" class="absolute inset-0 p-3 overflow-auto flex flex-col">
+                    <pre
+                        class="font-mono text-[13px] leading-normal overflow-x-auto text-slate-800 flex-1"><code id="python-preview"># Kéo khối để xem mã nguồn Python...</code></pre>
                 </div>
-                <div id="console-output"
-                    class="flex-1 p-3 overflow-auto bg-[#f8fafc] font-mono text-[13px] leading-relaxed text-slate-800 whitespace-pre-wrap">
-                    Sẵn sàng nhận lệnh!
+                <div id="tab-explain" class="absolute inset-0 p-4 overflow-auto bg-white flex flex-col hidden">
+                    <div id="explain-output"
+                        class="font-sans text-[13.5px] leading-relaxed text-slate-800 flex-1 whitespace-pre-wrap">
+                        Ghép khối để xem giải thích nhé!</div>
+                </div>
+                <div id="tab-challenge"
+                    class="absolute inset-0 p-4 overflow-auto bg-[#fffdfa] flex flex-col hidden">
+                    <div class="flex items-center space-x-2.5 pb-2.5 border-b border-amber-200/80 mb-3 shrink-0">
+                        <span class="text-2xl">🎯</span>
+                        <div class="min-w-0 flex-1">
+                            <h4 id="right-challenge-title" class="text-sm font-bold text-amber-900 leading-tight">
+                                Thử thách</h4>
+                            <span class="text-[11px] font-semibold text-amber-600">Bảng nhiệm vụ & Đề bài chi
+                                tiết</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3.5 text-xs flex-1">
+                        <div>
+                            <span class="font-bold text-slate-700 block mb-1 text-xs">📝 Yêu cầu cần làm:</span>
+                            <div id="right-challenge-desc"
+                                class="text-slate-800 leading-relaxed bg-amber-50/70 p-3 rounded-xl border border-amber-200 text-xs font-medium">
+                                ...</div>
+                        </div>
+                        <div
+                            class="p-2.5 bg-sky-50 rounded-xl border border-sky-200 text-sky-800 text-[11px] flex items-center space-x-2">
+                            <i class="fa-solid fa-flag text-amber-500 text-sm"></i>
+                            <span>Bấm <b>Lá cờ vàng</b> trên sân khấu để chạy và tự động nộp bài!</span>
+                        </div>
+                    </div>
+                    <div class="pt-2.5 border-t border-slate-200 flex items-center justify-between mt-2 shrink-0">
+                        <span class="text-[10px] text-slate-400 font-medium">SaoVietPyScratch Challenge
+                            System</span>
+                        <button onclick="quitChallenge()"
+                            class="text-xs text-red-500 hover:text-red-700 font-bold hover:underline cursor-pointer">
+                            <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>Thoát thử thách
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Right Column: Python Code & Magic Variables -->
-        <section class="w-full lg:w-[380px] flex flex-col gap-4 shrink-0">
-            <!-- Tabs Panel Card -->
-            <div class="panel-card flex flex-col flex-1">
-                <div id="right-tabs-header"
-                    class="bg-[#e6effc] px-4 pt-1.5 flex items-center justify-between border-b-3 border-[#2b53a7] shrink-0">
-                    <div class="flex space-x-1">
-                        <button id="tab-code-btn" onclick="switchTab('code')"
-                            class="px-3 py-1.5 rounded-t-lg font-bold text-xs transition-all border-b-2 border-[#f89b1c] text-[#2b53a7] bg-white shadow-sm">
-                            <i class="fa-brands fa-python text-[#f89b1c] mr-1"></i>Python
-                        </button>
-                        <button id="tab-explain-btn" onclick="switchTab('explain')"
-                            class="px-3 py-1.5 rounded-t-lg font-bold text-xs transition-all text-slate-500 hover:text-[#2b53a7] bg-transparent">
-                            <i class="fa-solid fa-lightbulb text-[#f89b1c] mr-1"></i>Giải thích
-                        </button>
-                        <button id="tab-challenge-btn" onclick="switchTab('challenge')"
-                            class="hidden px-3 py-1.5 rounded-t-lg font-bold text-xs transition-all text-amber-700 hover:text-[#2b53a7] bg-transparent">
-                            <i class="fa-solid fa-bullseye text-[#f89b1c] mr-1"></i>Nhiệm vụ
-                        </button>
-                    </div>
+        <!-- Panel 5 (Dưới cùng ngang 2 cột): Magic Variables Card -->
+        <section id="variables-panel" class="panel-card px-4 py-2.5 sm:py-3 flex flex-col justify-between shrink-0 min-h-0">
+            <div class="flex items-center justify-between shrink-0 mb-1.5">
+                <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1 text-[#f89b1c]"></i>
+                    <span>Rương Kho Báu Biến Số</span>
                 </div>
-
-                <div class="flex-1 relative bg-white">
-                    <div id="tab-code" class="absolute inset-0 p-3 overflow-auto flex flex-col">
-                        <pre
-                            class="font-mono text-[13px] leading-normal overflow-x-auto text-slate-800 flex-1"><code id="python-preview"># Kéo khối để xem mã nguồn Python...</code></pre>
-                    </div>
-                    <div id="tab-explain" class="absolute inset-0 p-4 overflow-auto bg-white flex flex-col hidden">
-                        <div id="explain-output"
-                            class="font-sans text-[13.5px] leading-relaxed text-slate-800 flex-1 whitespace-pre-wrap">
-                            Ghép khối để xem giải thích nhé!</div>
-                    </div>
-                    <div id="tab-challenge"
-                        class="absolute inset-0 p-4 overflow-auto bg-[#fffdfa] flex flex-col hidden">
-                        <div class="flex items-center space-x-2.5 pb-2.5 border-b border-amber-200/80 mb-3 shrink-0">
-                            <span class="text-2xl">🎯</span>
-                            <div class="min-w-0 flex-1">
-                                <h4 id="right-challenge-title" class="text-sm font-bold text-amber-900 leading-tight">
-                                    Thử thách</h4>
-                                <span class="text-[11px] font-semibold text-amber-600">Bảng nhiệm vụ & Đề bài chi
-                                    tiết</span>
-                            </div>
-                        </div>
-                        <div class="space-y-3.5 text-xs flex-1">
-                            <div>
-                                <span class="font-bold text-slate-700 block mb-1 text-xs">📝 Yêu cầu cần làm:</span>
-                                <div id="right-challenge-desc"
-                                    class="text-slate-800 leading-relaxed bg-amber-50/70 p-3 rounded-xl border border-amber-200 text-xs font-medium">
-                                    ...</div>
-                            </div>
-                            <div
-                                class="p-2.5 bg-sky-50 rounded-xl border border-sky-200 text-sky-800 text-[11px] flex items-center space-x-2">
-                                <i class="fa-solid fa-flag text-amber-500 text-sm"></i>
-                                <span>Bấm <b>Lá cờ vàng</b> trên sân khấu để chạy và tự động nộp bài!</span>
-                            </div>
-                        </div>
-                        <div class="pt-2.5 border-t border-slate-200 flex items-center justify-between mt-2 shrink-0">
-                            <span class="text-[10px] text-slate-400 font-medium">SaoVietPyScratch Challenge
-                                System</span>
-                            <button onclick="quitChallenge()"
-                                class="text-xs text-red-500 hover:text-red-700 font-bold hover:underline cursor-pointer">
-                                <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>Thoát thử thách
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <div class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Magic Variables</div>
             </div>
-
-            <!-- Magic Variables Card -->
-            <div class="panel-card p-4 h-[120px] lg:h-[200px] shrink-0 flex flex-col justify-between">
-                <div class="flex items-center justify-between shrink-0 mb-2">
-                    <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
-                        <i class="fa-solid fa-wand-magic-sparkles mr-1 text-[#f89b1c]"></i>
-                        <span>Rương Kho Báu Biến Số</span>
-                    </div>
-                    <div class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Magic Variables</div>
-                </div>
-                <div id="variables-chest-container"
-                    class="flex-1 flex items-center justify-start bg-[#f0f4fa] rounded-xl px-2 py-1 overflow-x-auto">
-                    <!-- Dynamic chests will be rendered here -->
-                </div>
+            <div id="variables-chest-container"
+                class="flex-1 flex items-center justify-start bg-[#f0f4fa] rounded-xl px-3 py-1 overflow-x-auto min-h-[50px]">
+                <!-- Dynamic chests will be rendered here -->
             </div>
         </section>
+
+        <!-- Hidden anchor for legacy ID compatibility -->
+        <div id="middle-section" style="display:none;"></div>
     </main>
     <script>
         if (typeof registerFieldColour === 'function') {
@@ -1947,11 +2063,12 @@
             // Đổi tên biến mặc định từ 'vật' (dịch máy) sang một tên có ý nghĩa hơn trong lập trình
             if (Blockly.Msg) Blockly.Msg['VARIABLES_DEFAULT_NAME'] = 'a';
 
+            const initialScale = (window.innerWidth < 1400) ? 0.82 : 0.95;
             workspace = Blockly.inject('blockly-editor', {
                 toolbox: document.getElementById('toolbox'),
                 trashcan: false, toolboxPosition: 'start', css: true, scrollbars: true, sounds: true,
                 grid: { spacing: 25, length: 3, colour: '#cbd5e1', snap: true },
-                zoom: { controls: true, wheel: false, startScale: 1.0, maxScale: 3.0, minScale: 0.01, scaleSpeed: 1.2, pinch: true }
+                zoom: { controls: true, wheel: false, startScale: initialScale, maxScale: 3.0, minScale: 0.01, scaleSpeed: 1.2, pinch: true }
             });
 
             // Khởi tạo khối bắt đầu mặc định và không cho phép xóa
@@ -1959,7 +2076,7 @@
             defaultStartBlock.initSvg();
             defaultStartBlock.render();
             defaultStartBlock.setDeletable(false);
-            defaultStartBlock.moveBy(50, 50);
+            defaultStartBlock.moveBy(30, 30);
 
             // Khôi phục lại trạng thái ghi đè zoomCenter (phiên bản ổn định nhất)
             try {
@@ -1975,38 +2092,74 @@
 
             workspace.registerButtonCallback('CREATE_VARIABLE', function (button) { Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace()); });
 
+            // Dynamic responsive flyout metrics
+            const getTargetFlyoutMetrics = () => {
+                const editor = document.getElementById('commands-panel');
+                const panelWidth = editor ? editor.offsetWidth : (window.innerWidth * 0.5);
+                if (panelWidth < 520) {
+                    return { scale: 0.65, width: 195 };
+                } else if (panelWidth < 680) {
+                    return { scale: 0.70, width: 215 };
+                } else {
+                    return { scale: 0.80, width: 255 };
+                }
+            };
+
             // Spoofing technique to lock flyout size and scale perfectly
             const fixFlyoutScale = () => {
                 const fo = workspace.getFlyout();
-                if (fo && !fo.isScalePatched) {
+                if (!fo) return;
+                const metrics = getTargetFlyoutMetrics();
+
+                if (!fo.isScalePatched) {
                     fo.isScalePatched = true;
                     const origPosition = fo.position;
                     fo.position = function () {
                         const targetWs = this.targetWorkspace || this.targetWorkspace_;
+                        const currentMetrics = getTargetFlyoutMetrics();
                         if (targetWs) {
-                            const realScale = targetWs.scale; targetWs.scale = 0.8; origPosition.apply(this, arguments); targetWs.scale = realScale;
-                        } else { origPosition.apply(this, arguments); }
+                            const realScale = targetWs.scale;
+                            targetWs.scale = currentMetrics.scale;
+                            origPosition.apply(this, arguments);
+                            targetWs.scale = realScale;
+                        } else {
+                            origPosition.apply(this, arguments);
+                        }
                     };
                     const origReflow = fo.reflow;
                     fo.reflow = function () {
                         const targetWs = this.targetWorkspace || this.targetWorkspace_;
+                        const currentMetrics = getTargetFlyoutMetrics();
                         if (targetWs) {
-                            const realScale = targetWs.scale; targetWs.scale = 0.8; origReflow.apply(this, arguments); targetWs.scale = realScale;
-                        } else { origReflow.apply(this, arguments); }
+                            const realScale = targetWs.scale;
+                            targetWs.scale = currentMetrics.scale;
+                            origReflow.apply(this, arguments);
+                            targetWs.scale = realScale;
+                        } else {
+                            origReflow.apply(this, arguments);
+                        }
                     };
 
                     const foWs = fo.getWorkspace();
                     if (foWs) {
                         foWs.isScaleLocked = true;
-                        foWs.setScale = function (scale) { Blockly.WorkspaceSvg.prototype.setScale.call(this, 0.8); };
-                        foWs.setScale(0.8);
+                        foWs.setScale = function (scale) {
+                            const currentMetrics = getTargetFlyoutMetrics();
+                            Blockly.WorkspaceSvg.prototype.setScale.call(this, currentMetrics.scale);
+                        };
                     }
-
-                    // Fixed width for Scratch UI ratio
-                    fo.width_ = 260;
-                    fo.getWidth = function () { return 260; };
-                    fo.reflow(); fo.position();
                 }
+
+                const foWs = fo.getWorkspace();
+                if (foWs) {
+                    foWs.setScale(metrics.scale);
+                }
+                fo.width_ = metrics.width;
+                fo.getWidth = function () { return metrics.width; };
+                try {
+                    fo.reflow();
+                    fo.position();
+                } catch (e) { }
             };
 
             registerAllGenerators();
@@ -2040,6 +2193,16 @@
 
             setTimeout(() => { fixFlyoutScale(); }, 500);
             window.addEventListener('resize', () => { Blockly.svgResize(workspace); fixFlyoutScale(); });
+            if (window.ResizeObserver) {
+                const resizeObserver = new ResizeObserver(() => {
+                    if (typeof Blockly !== 'undefined' && workspace) {
+                        Blockly.svgResize(workspace);
+                        fixFlyoutScale();
+                    }
+                });
+                const blockEditorEl = document.getElementById('blockly-editor');
+                if (blockEditorEl) resizeObserver.observe(blockEditorEl);
+            }
             resetTurtle();
         });
     </script>
@@ -2350,7 +2513,7 @@
             const vars = Object.keys(window.activeVariables);
             if (vars.length === 0) {
                 container.innerHTML = `
-                    <div class="text-[11px] text-slate-500 italic text-center py-4 w-full">
+                    <div class="text-[11px] text-slate-500 italic text-center py-1 w-full">
                         Chưa có biến số nào được tạo!
                     </div>
                 `;
@@ -2464,12 +2627,10 @@
             const blockEditor = document.getElementById('blockly-editor');
             const sidebar = document.getElementById('scratch-sidebar');
             const codeEditor = document.getElementById('python-editor-container');
-            const terminalPanel = document.getElementById('terminal-panel');
-            const middleSection = document.getElementById('middle-section');
             const rightTabsHeader = document.getElementById('right-tabs-header');
 
-            const activeClass = "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#2b53a7] text-white shadow-sm border border-[#2b53a7]";
-            const inactiveClass = "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-[#2b53a7] hover:bg-[#d8e6f7] transition-all border border-[#cbdbea]";
+            const activeClass = "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#2b53a7] text-white shadow-sm border border-[#2b53a7] cursor-pointer";
+            const inactiveClass = "px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-[#2b53a7] hover:bg-[#d8e6f7] transition-all border border-[#cbdbea] cursor-pointer";
 
             if (mode === 'blocks') {
                 btnBlocks.className = activeClass;
@@ -2477,15 +2638,6 @@
                 blockEditor.classList.remove('hidden');
                 sidebar.classList.remove('hidden');
                 codeEditor.classList.add('hidden');
-
-                // Return terminal panel to middle section and restore border
-                if (terminalPanel && middleSection) {
-                    middleSection.appendChild(terminalPanel);
-                    terminalPanel.style.border = '';
-                    terminalPanel.style.borderTop = '';
-                    terminalPanel.style.borderRadius = '';
-                    terminalPanel.classList.add('panel-card');
-                }
 
                 // Hiển thị tab Python khi ở chế độ Khối lệnh
                 const btnTabCode = document.getElementById('tab-code-btn');
@@ -2515,15 +2667,6 @@
                 blockEditor.classList.add('hidden');
                 sidebar.classList.add('hidden');
                 codeEditor.classList.remove('hidden');
-
-                // Move terminal panel below python editor and modify border to fit
-                if (terminalPanel && codeEditor) {
-                    codeEditor.appendChild(terminalPanel);
-                    terminalPanel.style.border = 'none';
-                    terminalPanel.style.borderTop = '3px solid #2b53a7';
-                    terminalPanel.style.borderRadius = '0';
-                    terminalPanel.classList.remove('panel-card');
-                }
 
                 // Ẩn hoàn toàn tab Python khi ở chế độ Gõ Python
                 const btnTabCode = document.getElementById('tab-code-btn');
