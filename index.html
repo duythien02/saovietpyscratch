@@ -4000,6 +4000,16 @@ for i in range(4):
             }
         }
 
+        // Helper: Tính cosin của góc rẽ giữa 2 đoạn thẳng liên tiếp để kiểm tra chính xác góc quay hình học
+        function calcVectorCos(l1, l2) {
+            if (!l1 || !l2) return 0;
+            const dx1 = l1.x2 - l1.x1, dy1 = l1.y2 - l1.y1;
+            const dx2 = l2.x2 - l2.x1, dy2 = l2.y2 - l2.y1;
+            const len1 = Math.hypot(dx1, dy1), len2 = Math.hypot(dx2, dy2);
+            if (len1 === 0 || len2 === 0) return 0;
+            return (dx1 * dx2 + dy1 * dy2) / (len1 * len2);
+        }
+
         // Challenges Data (14 Thử Thách Từ Đơn Giản Đến Nâng Cao)
         window.challenges = [
             // CẤP ĐỘ 1: KHỞI ĐỘNG & LÀM CHỦ LỆNH CƠ BẢN
@@ -4027,13 +4037,21 @@ for i in range(4):
                 desc: 'Điều khiển chú Rùa vượt chướng ngại vật bằng cách vẽ một chiếc cầu thang gồm ít nhất <b>3 bậc</b>. Mỗi bậc: tiến <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">40</code> bước, rẽ trái <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">90°</code>, tiến <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">40</code> bước, rồi rẽ phải <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">90°</code>.',
                 validate: function (consoleLog, paths, variables) {
                     const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
-                    if (lines.length < 6) return false;
+                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 10);
+                    if (validLines.length < 6) return false;
                     let validSteps = 0;
-                    for (let p of lines) {
+                    for (let p of validLines) {
                         const dist = Math.hypot(p.x2 - p.x1, p.y2 - p.y1);
-                        if (Math.abs(dist - 40) <= 8) validSteps++;
+                        if (Math.abs(dist - 40) <= 12) validSteps++;
                     }
-                    return validSteps >= 5;
+                    if (validSteps < 6) return false;
+                    // Các bậc thang liên tiếp phải rẽ vuông góc (cos xấp xỉ 0)
+                    let rightAngles = 0;
+                    for (let i = 0; i < validLines.length - 1; i++) {
+                        const cosA = calcVectorCos(validLines[i], validLines[i + 1]);
+                        if (Math.abs(cosA) <= 0.35) rightAngles++;
+                    }
+                    return rightAngles >= 5;
                 }
             },
             {
@@ -4045,13 +4063,14 @@ for i in range(4):
                 desc: 'Chỉnh độ dày nét bút lên <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">5</code>, màu đỏ (<code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">red</code>), và điều khiển Rùa vẽ dấu cộng <code class="text-red-500 font-bold">+</code> có 4 nhánh đều nhau (mỗi nhánh dài <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">50</code> bước tính từ tâm).',
                 validate: function (consoleLog, paths, variables) {
                     const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
-                    if (lines.length < 4) return false;
+                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 15);
+                    if (validLines.length < 4) return false;
                     let branchCount = 0;
-                    for (let p of lines) {
+                    for (let p of validLines) {
                         const dist = Math.hypot(p.x2 - p.x1, p.y2 - p.y1);
-                        if (Math.abs(dist - 50) <= 12) branchCount++;
+                        if (Math.abs(dist - 50) <= 15) branchCount++;
                     }
-                    return branchCount >= 3;
+                    return branchCount >= 4;
                 }
             },
 
@@ -4065,16 +4084,23 @@ for i in range(4):
                 desc: 'Hãy viết code Python sử dụng vòng lặp <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">for</code> 4 lần để vẽ một hình vuông kín có cạnh là <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">100</code> bước.',
                 validate: function (consoleLog, paths, variables) {
                     const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
-                    if (lines.length < 4) return false;
-                    let squareSegments = 0;
-                    for (let p of lines) {
+                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 15);
+                    // Hình vuông phải có đúng 4 cạnh
+                    if (validLines.length !== 4) return false;
+                    for (let p of validLines) {
                         const dist = Math.hypot(p.x2 - p.x1, p.y2 - p.y1);
-                        if (Math.abs(dist - 100) <= 10) squareSegments++;
+                        if (Math.abs(dist - 100) > 18) return false;
                     }
-                    if (squareSegments < 4) return false;
-                    const first = lines[0];
-                    const last = lines[lines.length - 1];
-                    return Math.hypot(last.x2 - first.x1, last.y2 - first.y1) <= 15;
+                    // Khép kín: điểm cuối chạm điểm đầu
+                    const first = validLines[0];
+                    const last = validLines[validLines.length - 1];
+                    if (Math.hypot(last.x2 - first.x1, last.y2 - first.y1) > 25) return false;
+                    // Góc rẽ vuông góc (cos xấp xỉ 0)
+                    for (let i = 0; i < validLines.length - 1; i++) {
+                        const cosA = calcVectorCos(validLines[i], validLines[i + 1]);
+                        if (Math.abs(cosA) > 0.35) return false;
+                    }
+                    return true;
                 }
             },
             {
@@ -4086,16 +4112,23 @@ for i in range(4):
                 desc: 'Đổi màu bút sang màu đỏ (<code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">red</code>) và vẽ hình tam giác đều khép kín có cạnh là <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">120</code> bước (góc rẽ <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">120°</code>).',
                 validate: function (consoleLog, paths, variables) {
                     const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
-                    if (lines.length < 3) return false;
-                    let triSegments = 0;
-                    for (let p of lines) {
+                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 15);
+                    // Tam giác phải có đúng 3 cạnh (loại bỏ hình vuông 4 cạnh)
+                    if (validLines.length !== 3) return false;
+                    for (let p of validLines) {
                         const dist = Math.hypot(p.x2 - p.x1, p.y2 - p.y1);
-                        if (Math.abs(dist - 120) <= 15) triSegments++;
+                        if (Math.abs(dist - 120) > 20) return false;
                     }
-                    if (triSegments < 3) return false;
-                    const first = lines[0];
-                    const last = lines[lines.length - 1];
-                    return Math.hypot(last.x2 - first.x1, last.y2 - first.y1) <= 20;
+                    // Khép kín: điểm cuối chạm điểm đầu
+                    const first = validLines[0];
+                    const last = validLines[validLines.length - 1];
+                    if (Math.hypot(last.x2 - first.x1, last.y2 - first.y1) > 25) return false;
+                    // Góc rẽ tam giác đều là 120 độ (cos xấp xỉ -0.5, nằm trong [-0.8, -0.2])
+                    for (let i = 0; i < validLines.length - 1; i++) {
+                        const cosA = calcVectorCos(validLines[i], validLines[i + 1]);
+                        if (cosA > -0.2 || cosA < -0.8) return false;
+                    }
+                    return true;
                 }
             },
             {
@@ -4106,10 +4139,16 @@ for i in range(4):
                 title: 'Thử thách 6: Vòng tròn kỳ diệu 🟣',
                 desc: 'Vẽ một hình tròn hoàn chỉnh có bán kính là <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">50</code> bước bằng lệnh vẽ đường cong tròn của Rùa.',
                 validate: function (consoleLog, paths, variables) {
-                    const circle = paths.find(p => p.type === 'circle' && Math.abs(p.r - 50) <= 10);
+                    const circle = paths.find(p => p.type === 'circle' && Math.abs(p.r - 50) <= 12);
                     if (circle) return true;
                     const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
-                    return lines.length >= 24;
+                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 5);
+                    if (validLines.length >= 24) {
+                        const first = validLines[0];
+                        const last = validLines[validLines.length - 1];
+                        return Math.hypot(last.x2 - first.x1, last.y2 - first.y1) <= 25;
+                    }
+                    return false;
                 }
             },
 
@@ -4207,16 +4246,23 @@ for i in range(4):
                 desc: 'Sử dụng vòng lặp <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">for</code> 5 lần: mỗi lần tiến <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">100</code> bước và rẽ phải <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">144°</code> để vẽ ngôi sao 5 cánh hoàn chỉnh.',
                 validate: function (consoleLog, paths, variables) {
                     const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
-                    if (lines.length < 5) return false;
-                    let starSegments = 0;
-                    for (let p of lines) {
+                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 15);
+                    // Ngôi sao 5 cánh phải có đúng 5 cạnh
+                    if (validLines.length !== 5) return false;
+                    for (let p of validLines) {
                         const dist = Math.hypot(p.x2 - p.x1, p.y2 - p.y1);
-                        if (Math.abs(dist - 100) <= 15) starSegments++;
+                        if (Math.abs(dist - 100) > 20) return false;
                     }
-                    if (starSegments < 5) return false;
-                    const first = lines[0];
-                    const last = lines[lines.length - 1];
-                    return Math.hypot(last.x2 - first.x1, last.y2 - first.y1) <= 20;
+                    // Khép kín
+                    const first = validLines[0];
+                    const last = validLines[validLines.length - 1];
+                    if (Math.hypot(last.x2 - first.x1, last.y2 - first.y1) > 25) return false;
+                    // Góc rẽ ngôi sao là 144 độ (cos xấp xỉ -0.81, nằm trong [-0.95, -0.65])
+                    for (let i = 0; i < validLines.length - 1; i++) {
+                        const cosA = calcVectorCos(validLines[i], validLines[i + 1]);
+                        if (cosA > -0.6 || cosA < -0.95) return false;
+                    }
+                    return true;
                 }
             },
             {
@@ -4228,7 +4274,13 @@ for i in range(4):
                 desc: 'Sử dụng vòng lặp có bước nhảy tăng dần (<code class="bg-slate-100 px-1 py-0.5 rounded text-amber-700 font-bold">range(10, 110, 10)</code>) để Rùa đi <code class="bg-slate-100 px-1 py-0.5 rounded text-blue-600 font-bold">i</code> bước và rẽ phải <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">90°</code> tạo thành hình xoắn ốc tuyệt đẹp.',
                 validate: function (consoleLog, paths, variables) {
                     const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
-                    return lines.length >= 8;
+                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 8);
+                    if (validLines.length < 8) return false;
+                    let rightAngles = 0;
+                    for (let i = 0; i < validLines.length - 1; i++) {
+                        if (Math.abs(calcVectorCos(validLines[i], validLines[i + 1])) <= 0.35) rightAngles++;
+                    }
+                    return rightAngles >= 6;
                 }
             },
             {
@@ -4239,10 +4291,11 @@ for i in range(4):
                 title: 'Thử thách 14: Bông hoa vạn hoa (Mandala) 🌸',
                 desc: 'Dùng vòng lặp 6 lần: mỗi lần vẽ một hình tròn bán kính <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">40</code> (hoặc hình vuông) rồi xoay Rùa sang phải <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">60°</code> để tạo thành bông hoa 6 cánh đối xứng.',
                 validate: function (consoleLog, paths, variables) {
-                    const circles = paths.filter(p => p.type === 'circle');
-                    if (circles.length >= 5) return true;
+                    const circles = paths.filter(p => p.type === 'circle' && Math.abs(p.r - 40) <= 15);
+                    if (circles.length >= 6) return true;
                     const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
-                    return lines.length >= 20;
+                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 10);
+                    return validLines.length >= 24;
                 }
             }
         ];
@@ -4314,6 +4367,8 @@ for i in range(4):
         function selectChallenge(id) {
             closeChallengeModal();
             window.activeChallengeId = id;
+            window.challengeTriggeredId = null;
+            window.challengeFastTrack = false;
             const ch = window.challenges.find(c => c.id === id);
             if (ch) {
                 // Right mission board
