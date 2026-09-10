@@ -2110,6 +2110,7 @@
                 const fo = workspace.getFlyout();
                 if (!fo) return;
                 const metrics = getTargetFlyoutMetrics();
+                const foWs = fo.getWorkspace();
 
                 if (!fo.isScalePatched) {
                     fo.isScalePatched = true;
@@ -2140,31 +2141,40 @@
                         }
                     };
 
-                    const foWs = fo.getWorkspace();
                     if (foWs) {
                         foWs.isScaleLocked = true;
                         foWs.setScale = function (scale) {
                             const currentMetrics = getTargetFlyoutMetrics();
-                            Blockly.WorkspaceSvg.prototype.setScale.call(this, currentMetrics.scale);
+                            if (Math.abs(this.scale - currentMetrics.scale) > 0.001) {
+                                Blockly.WorkspaceSvg.prototype.setScale.call(this, currentMetrics.scale);
+                            }
                         };
                     }
                 }
 
-                const foWs = fo.getWorkspace();
-                if (foWs) {
+                let needsUpdate = false;
+                if (foWs && Math.abs(foWs.scale - metrics.scale) > 0.001) {
                     foWs.setScale(metrics.scale);
+                    needsUpdate = true;
                 }
-                fo.width_ = metrics.width;
-                fo.getWidth = function () { return metrics.width; };
-                try {
-                    fo.reflow();
-                    fo.position();
-                } catch (e) { }
+                if (fo.width_ !== metrics.width) {
+                    fo.width_ = metrics.width;
+                    fo.getWidth = function () { return metrics.width; };
+                    needsUpdate = true;
+                }
+                if (needsUpdate) {
+                    try {
+                        fo.reflow();
+                        fo.position();
+                    } catch (e) { }
+                }
             };
 
             registerAllGenerators();
             workspace.addChangeListener((e) => {
-                if (e.type === Blockly.Events.VIEWPORT_CHANGE || e.type === Blockly.Events.FINISHED_LOADING) fixFlyoutScale();
+                if (e.isUiEvent) return;
+                if (e.type === Blockly.Events.BLOCK_FIELD_INTERMEDIATE_CHANGE) return;
+                if (e.type === Blockly.Events.FINISHED_LOADING) fixFlyoutScale();
                 handleWorkspaceChange();
             });
 
@@ -2194,10 +2204,18 @@
             setTimeout(() => { fixFlyoutScale(); }, 500);
             window.addEventListener('resize', () => { Blockly.svgResize(workspace); fixFlyoutScale(); });
             if (window.ResizeObserver) {
-                const resizeObserver = new ResizeObserver(() => {
-                    if (typeof Blockly !== 'undefined' && workspace) {
-                        Blockly.svgResize(workspace);
-                        fixFlyoutScale();
+                let lastWidth = 0, lastHeight = 0;
+                const resizeObserver = new ResizeObserver((entries) => {
+                    for (const entry of entries) {
+                        const cr = entry.contentRect;
+                        if (Math.abs(cr.width - lastWidth) > 1 || Math.abs(cr.height - lastHeight) > 1) {
+                            lastWidth = cr.width;
+                            lastHeight = cr.height;
+                            if (typeof Blockly !== 'undefined' && workspace) {
+                                Blockly.svgResize(workspace);
+                                fixFlyoutScale();
+                            }
+                        }
                     }
                 });
                 const blockEditorEl = document.getElementById('blockly-editor');
