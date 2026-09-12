@@ -361,6 +361,64 @@
                 min-height: 160px;
             }
         }
+
+        /* ========================================================
+           STAGE EXPANDED MODE (Xem mở rộng Sân khấu, Code, Giải thích, Terminal, Biến số)
+           ======================================================== */
+        body #app-main.stage-expanded {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) !important;
+            grid-template-rows: minmax(0, 1fr) 180px !important;
+            grid-template-areas:
+                "stage      tabs"
+                "terminal   variables" !important;
+            overflow: hidden !important;
+        }
+
+        #turtle-canvas {
+            display: block;
+            box-sizing: border-box;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            transition: width 0.15s ease, height 0.15s ease;
+        }
+
+        body #app-main.stage-expanded #commands-panel {
+            display: none !important;
+        }
+
+        body #app-main.stage-expanded #stage-panel,
+        body #app-main.stage-expanded #tabs-panel,
+        body #app-main.stage-expanded #terminal-panel,
+        body #app-main.stage-expanded #variables-panel {
+            min-height: 0 !important;
+            height: 100% !important;
+        }
+
+        @media (max-width: 899px) {
+            body #app-main.stage-expanded {
+                display: flex !important;
+                flex-direction: column !important;
+                overflow-y: auto !important;
+                height: auto !important;
+            }
+            body #app-main.stage-expanded #stage-panel {
+                height: 380px !important;
+                flex-shrink: 0 !important;
+            }
+            body #app-main.stage-expanded #tabs-panel {
+                height: 320px !important;
+                flex-shrink: 0 !important;
+            }
+            body #app-main.stage-expanded #terminal-panel {
+                height: 180px !important;
+                flex-shrink: 0 !important;
+            }
+            body #app-main.stage-expanded #variables-panel {
+                min-height: 100px !important;
+                flex-shrink: 0 !important;
+            }
+        }
     </style>
 </head>
 
@@ -570,12 +628,18 @@
                     <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wide">Tốc độ</span>
                     <input id="speed-slider" type="range" min="1" max="10" value="5"
                         class="w-10 sm:w-12 accent-[#f89b1c] cursor-pointer">
+                    <div class="h-4 w-[1px] bg-slate-200"></div>
+                    <button id="toggle-stage-expand-btn" onclick="toggleStageExpandMode()"
+                        class="text-[#2b53a7] hover:text-[#1d3b7a] hover:bg-blue-100/70 p-1.5 rounded-lg bouncy-btn transition-all cursor-pointer flex items-center justify-center border border-[#2b53a7]/30 shadow-xs"
+                        title="Phóng to xem Sân khấu & Kết quả (Ẩn khu vực khối lệnh)">
+                        <i class="fa-solid fa-expand text-sm" id="stage-expand-icon"></i>
+                    </button>
                 </div>
             </div>
             <!-- Stage (Canvas) -->
-            <div class="flex-1 bg-[#e4e9f2] p-2 sm:p-3 relative flex items-center justify-center overflow-hidden min-h-0">
+            <div id="stage-canvas-container" class="flex-1 bg-[#e4e9f2] p-2 sm:p-3 relative flex items-center justify-center overflow-hidden min-h-0">
                 <canvas id="turtle-canvas" width="600" height="340"
-                    class="max-w-full max-h-full rounded-xl border-2 border-slate-300 shadow-inner bg-[#fffdf5] block object-contain"></canvas>
+                    class="rounded-xl border-2 border-slate-300 shadow-inner bg-[#fffdf5] block"></canvas>
             </div>
         </section>
 
@@ -648,9 +712,9 @@
                                 ...</div>
                         </div>
                         <div
-                            class="p-2.5 bg-sky-50 rounded-xl border border-sky-200 text-sky-800 text-[11px] flex items-center space-x-2">
-                            <i class="fa-solid fa-flag text-amber-500 text-sm"></i>
-                            <span>Bấm <b>Lá cờ vàng</b> trên sân khấu để chạy và tự động nộp bài!</span>
+                            class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] flex items-center space-x-2">
+                            <i class="fa-solid fa-keyboard text-amber-600 text-sm shrink-0"></i>
+                            <span>Chỉ chấm điểm khi bạn viết code ở chế độ <b>⌨️ Gõ Python</b> và bấm <b>Lá cờ vàng</b>!</span>
                         </div>
                     </div>
                     <div class="pt-2.5 border-t border-slate-200 flex items-center justify-between mt-2 shrink-0">
@@ -870,38 +934,38 @@
 
             mapBlock('turtle_forward',
                 (b, g) => `queueCommand({type: "forward", value: ${getJsInputValue(b, g, 'STEPS', '10')}});\n`,
-                (b, g) => `turtle.forward(${getPyInputValue(b, g, 'STEPS', '10')})\n`,
+                (b, g) => `t.forward(${getPyInputValue(b, g, 'STEPS', '10')})\n`,
                 (b) => `Rùa tiến ${getExplainInputValue(b, 'STEPS', '10')} bước\n`
             );
             mapBlock('turtle_backward',
                 (b, g) => `queueCommand({type: "backward", value: ${getJsInputValue(b, g, 'STEPS', '10')}});\n`,
-                (b, g) => `turtle.backward(${getPyInputValue(b, g, 'STEPS', '10')})\n`,
+                (b, g) => `t.backward(${getPyInputValue(b, g, 'STEPS', '10')})\n`,
                 (b) => `Rùa lùi ${getExplainInputValue(b, 'STEPS', '10')} bước\n`
             );
             mapBlock('turtle_right',
                 (b, g) => `queueCommand({type: "right", value: ${getJsInputValue(b, g, 'DEGREES', '90')}});\n`,
-                (b, g) => `turtle.right(${getPyInputValue(b, g, 'DEGREES', '90')})\n`,
+                (b, g) => `t.right(${getPyInputValue(b, g, 'DEGREES', '90')})\n`,
                 (b) => `Rùa quay phải ${getExplainInputValue(b, 'DEGREES', '90')}°\n`
             );
             mapBlock('turtle_left',
                 (b, g) => `queueCommand({type: "left", value: ${getJsInputValue(b, g, 'DEGREES', '90')}});\n`,
-                (b, g) => `turtle.left(${getPyInputValue(b, g, 'DEGREES', '90')})\n`,
+                (b, g) => `t.left(${getPyInputValue(b, g, 'DEGREES', '90')})\n`,
                 (b) => `Rùa quay trái ${getExplainInputValue(b, 'DEGREES', '90')}°\n`
             );
             mapBlock('turtle_pen',
                 (b, g) => `queueCommand({type: "pen", value: ${b.getFieldValue('PEN_STATE') === 'pendown' ? 'true' : 'false'}});\n`,
-                (b, g) => b.getFieldValue('PEN_STATE') === 'pendown' ? 'turtle.pendown()\n' : 'turtle.penup()\n',
+                (b, g) => b.getFieldValue('PEN_STATE') === 'pendown' ? 't.pendown()\n' : 't.penup()\n',
                 (b) => `${b.getFieldValue('PEN_STATE') === 'pendown' ? 'Đặt bút xuống để vẽ' : 'Nhấc bút lên'}\n`
             );
             mapBlock('turtle_color',
                 (b, g) => `queueCommand({type: "color", color: "${b.getFieldValue('COLOR')}", fillColor: "${b.getFieldValue('FILL_COLOR')}"});\n`,
-                (b, g) => `turtle.color("${b.getFieldValue('COLOR')}", "${b.getFieldValue('FILL_COLOR')}")\n`,
+                (b, g) => `t.color("${b.getFieldValue('COLOR')}", "${b.getFieldValue('FILL_COLOR')}")\n`,
                 (b) => `Đổi màu nét ${b.getFieldValue('COLOR')}, màu tô ${b.getFieldValue('FILL_COLOR')}\n`
             );
             mapBlock('turtle_width',
-                (b, g) => `queueCommand({type: "width", value: ${getJsInputValue(b, g, 'WIDTH', '3')}});\n`,
-                (b, g) => `turtle.width(${getPyInputValue(b, g, 'WIDTH', '3')})\n`,
-                (b) => `Đổi độ dày nét thành ${getExplainInputValue(b, 'WIDTH', '3')}\n`
+                (b, g) => `queueCommand({type: "width", value: ${getJsInputValue(b, g, 'WIDTH', '2')}});\n`,
+                (b, g) => `t.width(${getPyInputValue(b, g, 'WIDTH', '2')})\n`,
+                (b) => `Đổi độ dày nét thành ${getExplainInputValue(b, 'WIDTH', '2')}\n`
             );
             mapBlock('py_print',
                 (b, g) => `queueCommand({type: "print", value: ${getJsInputValue(b, g, 'TEXT', '""')}});\n`,
@@ -924,39 +988,39 @@
                 (b) => [`(chuyển ${getExplainInputValue(b, 'VALUE', '0')} thành số thập phân)`, explainGen.ORDER_NONE]
             );
 
-            mapBlock('turtle_clear', (b, g) => `queueCommand({type: "clear"});\n`, (b, g) => `turtle.clear()\n`, (b) => `Xóa toàn bộ hình đã vẽ\n`);
-            mapBlock('turtle_home', (b, g) => `queueCommand({type: "home"});\n`, (b, g) => `turtle.home()\n`, (b) => `Về vị trí trung tâm (0, 0)\n`);
+            mapBlock('turtle_clear', (b, g) => `queueCommand({type: "clear"});\n`, (b, g) => `t.clear()\n`, (b) => `Xóa toàn bộ hình đã vẽ\n`);
+            mapBlock('turtle_home', (b, g) => `queueCommand({type: "home"});\n`, (b, g) => `t.home()\n`, (b) => `Về vị trí trung tâm (0, 0)\n`);
             mapBlock('event_start', (b, g) => `// Bắt đầu\n`, (b, g) => `# Bắt đầu\n`, (b) => `<b class="text-indigo-800">Bắt đầu chương trình</b>\n`);
 
             // NEW BLOCKS GENERATORS
             mapBlock('turtle_circle',
                 (b, g) => `queueCommand({type: "circle", value: ${getJsInputValue(b, g, 'RADIUS', '90')}});\n`,
-                (b, g) => `turtle.circle(${getPyInputValue(b, g, 'RADIUS', '90')})\n`,
+                (b, g) => `t.circle(${getPyInputValue(b, g, 'RADIUS', '90')})\n`,
                 (b) => `Rùa vẽ hình tròn bán kính ${getExplainInputValue(b, 'RADIUS', '90')}\n`
             );
             mapBlock('turtle_bgcolor',
                 (b, g) => `queueCommand({type: "bgcolor", value: "${b.getFieldValue('COLOR')}"});\n`,
-                (b, g) => `turtle.bgcolor("${b.getFieldValue('COLOR')}")\n`,
+                (b, g) => `t.bgcolor("${b.getFieldValue('COLOR')}")\n`,
                 (b) => `Đổi màu nền thành ${b.getFieldValue('COLOR')}\n`
             );
             mapBlock('turtle_begin_fill',
                 (b, g) => `queueCommand({type: "begin_fill"});\n`,
-                (b, g) => `turtle.begin_fill()\n`,
+                (b, g) => `t.begin_fill()\n`,
                 (b) => `Bắt đầu tô màu\n`
             );
             mapBlock('turtle_end_fill',
                 (b, g) => `queueCommand({type: "end_fill"});\n`,
-                (b, g) => `turtle.end_fill()\n`,
+                (b, g) => `t.end_fill()\n`,
                 (b) => `Đổ màu tô kín\n`
             );
             mapBlock('turtle_speed',
                 (b, g) => `queueCommand({type: "speed", value: ${getJsInputValue(b, g, 'SPEED', '5')}});\n`,
-                (b, g) => `turtle.speed(${getPyInputValue(b, g, 'SPEED', '5')})\n`,
+                (b, g) => `t.speed(${getPyInputValue(b, g, 'SPEED', '5')})\n`,
                 (b) => `Tốc độ vẽ: ${getExplainInputValue(b, 'SPEED', '5')}\n`
             );
             mapBlock('turtle_shape',
                 (b, g) => `queueCommand({type: "shape", value: "${b.getFieldValue('SHAPE')}"});\n`,
-                (b, g) => `turtle.shape("${b.getFieldValue('SHAPE')}")\n`,
+                (b, g) => `t.shape("${b.getFieldValue('SHAPE')}")\n`,
                 (b) => `Hình dáng rùa: ${b.getFieldValue('SHAPE')}\n`
             );
 
@@ -1172,44 +1236,51 @@
         const canvas = document.getElementById('turtle-canvas');
         const ctx = canvas.getContext('2d');
         let paths = [];
-        let turtleStart = { x: 300, y: 170, angle: 0 };
-        let turtleState = { x: 300, y: 170, angle: 0, penDown: true, color: '#3b82f6', width: 3 };
+        let turtleStart = { x: Math.round(canvas.width / 2), y: Math.round(canvas.height / 2), angle: 0 };
+        let turtleState = { x: Math.round(canvas.width / 2), y: Math.round(canvas.height / 2), angle: 0, penDown: true, color: '#3b82f6', width: 2 };
 
         function drawBackground() {
+            const cx = Math.round(canvas.width / 2);
+            const cy = Math.round(canvas.height / 2);
+
             if (turtleState.customBgColor) {
                 ctx.fillStyle = turtleState.customBgColor; ctx.fillRect(0, 0, canvas.width, canvas.height);
             } else {
                 // Default clean background
                 ctx.fillStyle = '#fffdf5'; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Draw a beautiful, subtle coordinate grid
+                // Draw a beautiful, subtle coordinate grid originating from center
                 ctx.save();
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.03)'; // Very faint black
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.035)'; // Very faint black
                 ctx.lineWidth = 1;
 
-                // Vertical lines every 50px
+                // Vertical lines every 50px originating from center
                 ctx.beginPath();
-                for (let x = 50; x < canvas.width; x += 50) {
-                    ctx.moveTo(x, 0);
-                    ctx.lineTo(x, canvas.height);
+                for (let x = cx; x < canvas.width; x += 50) {
+                    ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
                 }
-                // Horizontal lines every 50px
-                for (let y = 50; y < canvas.height; y += 50) {
-                    ctx.moveTo(0, y);
-                    ctx.lineTo(canvas.width, y);
+                for (let x = cx - 50; x > 0; x -= 50) {
+                    ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+                }
+                // Horizontal lines every 50px originating from center
+                for (let y = cy; y < canvas.height; y += 50) {
+                    ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+                }
+                for (let y = cy - 50; y > 0; y -= 50) {
+                    ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
                 }
                 ctx.stroke();
 
                 // Draw center major axes
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)'; // Slightly more visible
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.09)'; // Slightly more visible
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
                 // Vertical center axis
-                ctx.moveTo(300, 0);
-                ctx.lineTo(300, canvas.height);
+                ctx.moveTo(cx, 0);
+                ctx.lineTo(cx, canvas.height);
                 // Horizontal center axis
-                ctx.moveTo(0, 170);
-                ctx.lineTo(canvas.width, 170);
+                ctx.moveTo(0, cy);
+                ctx.lineTo(canvas.width, cy);
                 ctx.stroke();
 
                 ctx.restore();
@@ -1224,27 +1295,27 @@
             if (iconKey === 'arrow') {
                 context.fillStyle = turtleState.color || '#3b82f6';
                 context.strokeStyle = '#ffffff';
-                context.lineWidth = 1.5;
+                context.lineWidth = 1;
                 context.beginPath();
-                context.moveTo(12, 0);
-                context.lineTo(-8, -8);
-                context.lineTo(-4, 0);
-                context.lineTo(-8, 8);
+                context.moveTo(10, 0);
+                context.lineTo(-7, -6);
+                context.lineTo(-3.5, 0);
+                context.lineTo(-7, 6);
                 context.closePath();
                 context.fill();
                 context.stroke();
             } else if (iconKey === 'circle') {
                 context.fillStyle = turtleState.color || '#3b82f6';
                 context.strokeStyle = '#ffffff';
-                context.lineWidth = 1.5;
+                context.lineWidth = 1;
                 context.beginPath();
-                context.arc(0, 0, 8, 0, 2 * Math.PI);
+                context.arc(0, 0, 6, 0, 2 * Math.PI);
                 context.fill();
                 context.stroke();
             } else {
                 const icons = { turtle: '🐢', cat: '🐱', rabbit: '🐰', bee: '🐝', rocket: '🚀' };
                 const icon = icons[iconKey] || '🐢';
-                context.font = '24px Arial';
+                context.font = '20px Arial';
                 context.textAlign = 'center';
                 context.textBaseline = 'middle';
 
@@ -1263,22 +1334,22 @@
 
         function drawSpeechBubble(context, x, y, text) {
             context.save();
-            context.font = 'bold 14px "Nunito", sans-serif';
-            const paddingX = 12;
-            const paddingY = 8;
+            context.font = 'bold 13px "Nunito", sans-serif';
+            const paddingX = 10;
+            const paddingY = 6;
             const metrics = context.measureText(text);
             const w = metrics.width + paddingX * 2;
             const h = 18 + paddingY * 2;
 
-            const bx = x + 15;
-            const by = y - 55;
+            const bx = x + 12;
+            const by = y - h - 14;
 
             context.fillStyle = 'white';
             context.strokeStyle = '#94a3b8';
-            context.lineWidth = 2;
+            context.lineWidth = 1.5;
             context.beginPath();
             if (context.roundRect) {
-                context.roundRect(bx, by, w, h, 10);
+                context.roundRect(bx, by, w, h, 8);
             } else {
                 context.rect(bx, by, w, h);
             }
@@ -1286,17 +1357,17 @@
             context.stroke();
 
             context.beginPath();
-            context.moveTo(bx + 10, by + h);
-            context.lineTo(bx - 5, by + h + 15);
-            context.lineTo(bx + 25, by + h);
+            context.moveTo(bx + 8, by + h);
+            context.lineTo(bx - 3, by + h + 12);
+            context.lineTo(bx + 20, by + h);
             context.fill();
             context.stroke();
 
             context.beginPath();
-            context.moveTo(bx + 11, by + h);
-            context.lineTo(bx + 24, by + h);
+            context.moveTo(bx + 9, by + h);
+            context.lineTo(bx + 19, by + h);
             context.strokeStyle = 'white';
-            context.lineWidth = 3;
+            context.lineWidth = 2.5;
             context.stroke();
 
             context.fillStyle = '#334155';
@@ -1308,6 +1379,7 @@
 
         function drawCanvas() {
             drawBackground();
+
             paths.forEach(p => {
                 if (p.type === 'fill' && p.points && p.points.length > 0) {
                     ctx.fillStyle = p.color;
@@ -1316,7 +1388,7 @@
                     for (let i = 1; i < p.points.length; i++) ctx.lineTo(p.points[i].x, p.points[i].y);
                     ctx.fill();
                 } else if (p.type === 'circle') {
-                    ctx.strokeStyle = p.color; ctx.lineWidth = p.width; ctx.lineCap = 'round';
+                    ctx.strokeStyle = p.color; ctx.lineWidth = p.width || 2; ctx.lineCap = 'round';
                     ctx.beginPath();
                     ctx.arc(p.cx, p.cy, p.r, p.startAngleRad, p.endAngleRad, p.counterClockwise);
                     ctx.stroke();
@@ -1326,18 +1398,18 @@
                     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
                     ctx.fill();
                 } else {
-                    ctx.strokeStyle = p.color; ctx.lineWidth = p.width; ctx.lineCap = 'round';
+                    ctx.strokeStyle = p.color; ctx.lineWidth = p.width || 2; ctx.lineCap = 'round';
                     ctx.beginPath(); ctx.moveTo(p.x1, p.y1); ctx.lineTo(p.x2, p.y2); ctx.stroke();
                 }
             });
             if (currentCommand && (currentCommand.type === 'forward' || currentCommand.type === 'backward' || currentCommand.type === 'goto' || currentCommand.type === 'setx' || currentCommand.type === 'sety')) {
                 if (turtleState.penDown) {
-                    ctx.strokeStyle = turtleState.color; ctx.lineWidth = turtleState.width; ctx.lineCap = 'round';
+                    ctx.strokeStyle = turtleState.color; ctx.lineWidth = turtleState.width || 2; ctx.lineCap = 'round';
                     ctx.beginPath(); ctx.moveTo(currentCommand.startX, currentCommand.startY); ctx.lineTo(turtleState.x, turtleState.y); ctx.stroke();
                 }
             } else if (currentCommand && currentCommand.type === 'circle') {
                 if (turtleState.penDown) {
-                    ctx.strokeStyle = turtleState.color; ctx.lineWidth = turtleState.width; ctx.lineCap = 'round';
+                    ctx.strokeStyle = turtleState.color; ctx.lineWidth = turtleState.width || 2; ctx.lineCap = 'round';
                     ctx.beginPath();
                     const startAngleRad = currentCommand.phi0 * Math.PI / 180;
                     let endAngleRad;
@@ -1454,17 +1526,167 @@
 
         function hardResetStage() {
             playClick();
-            turtleStart = { x: 300, y: 170, angle: 0 };
+            turtleStart = { x: Math.round(canvas.width / 2), y: Math.round(canvas.height / 2), angle: 0 };
             resetTurtle();
         }
 
         function resetTurtle() {
             paths = [];
-            turtleState = { x: turtleStart.x, y: turtleStart.y, angle: turtleStart.angle, penDown: true, color: '#3b82f6', fillColor: '#f43f5e', width: 3, customBgColor: null, shape: null, isFilling: false, fillPoints: [], visible: true };
+            turtleState = { x: turtleStart.x, y: turtleStart.y, angle: turtleStart.angle, penDown: true, color: '#3b82f6', fillColor: '#f43f5e', width: 2, customBgColor: null, shape: null, isFilling: false, fillPoints: [], visible: true };
             updateCoordsDisplay(); drawCanvas();
         }
 
-        // Removed changeCompanion function to clean up
+        function resizeCanvasDisplay() {
+            const canvas = document.getElementById('turtle-canvas');
+            const container = document.getElementById('stage-canvas-container');
+            if (!canvas || !container) return;
+
+            const padX = 20;
+            const padY = 20;
+            const availW = Math.max(100, container.clientWidth - padX);
+            const availH = Math.max(100, container.clientHeight - padY);
+
+            const targetRatio = 600 / 340;
+            const containerRatio = availW / availH;
+
+            let displayW, displayH;
+            if (containerRatio > targetRatio) {
+                // Khung chứa rộng hơn tỷ lệ -> khớp tối đa theo chiều cao
+                displayH = availH;
+                displayW = Math.round(displayH * targetRatio);
+            } else {
+                // Khung chứa cao hơn tỷ lệ -> khớp tối đa theo chiều rộng
+                displayW = availW;
+                displayH = Math.round(displayW / targetRatio);
+            }
+
+            const oldW = canvas.width || displayW;
+            const oldH = canvas.height || displayH;
+            const oldCx = Math.round(oldW / 2);
+            const oldCy = Math.round(oldH / 2);
+
+            const newCx = Math.round(displayW / 2);
+            const newCy = Math.round(displayH / 2);
+
+            const dx = newCx - oldCx;
+            const dy = newCy - oldCy;
+
+            // Mở rộng thực sự không gian sân khấu (1:1 pixel) chứ không co giãn đổi tỉ lệ
+            canvas.width = displayW;
+            canvas.height = displayH;
+            canvas.style.width = displayW + 'px';
+            canvas.style.height = displayH + 'px';
+
+            if (dx !== 0 || dy !== 0) {
+                turtleStart.x += dx;
+                turtleStart.y += dy;
+                turtleState.x += dx;
+                turtleState.y += dy;
+
+                if (currentCommand) {
+                    if (currentCommand.startX !== undefined) currentCommand.startX += dx;
+                    if (currentCommand.startY !== undefined) currentCommand.startY += dy;
+                    if (currentCommand.endX !== undefined) currentCommand.endX += dx;
+                    if (currentCommand.endY !== undefined) currentCommand.endY += dy;
+                    if (currentCommand.cx !== undefined) currentCommand.cx += dx;
+                    if (currentCommand.cy !== undefined) currentCommand.cy += dy;
+                }
+
+                paths.forEach(p => {
+                    if (p.x1 !== undefined && p.x2 !== undefined) {
+                        p.x1 += dx; p.y1 += dy;
+                        p.x2 += dx; p.y2 += dy;
+                    }
+                    if (p.cx !== undefined && p.cy !== undefined) {
+                        p.cx += dx; p.cy += dy;
+                    }
+                    if (p.x !== undefined && p.y !== undefined) {
+                        p.x += dx; p.y += dy;
+                    }
+                    if (p.points && Array.isArray(p.points)) {
+                        p.points.forEach(pt => {
+                            pt.x += dx; pt.y += dy;
+                        });
+                    }
+                });
+            }
+
+            if (typeof drawCanvas === 'function') drawCanvas();
+        }
+        window.resizeCanvasDisplay = resizeCanvasDisplay;
+
+        function toggleStageExpandMode() {
+            if (typeof playClick === 'function') playClick();
+            const mainEl = document.getElementById('app-main');
+            const iconEl = document.getElementById('stage-expand-icon');
+            const btnEl = document.getElementById('toggle-stage-expand-btn');
+            if (!mainEl) return;
+
+            const isExpanded = mainEl.classList.toggle('stage-expanded');
+
+            if (isExpanded) {
+                if (iconEl) {
+                    iconEl.classList.remove('fa-expand');
+                    iconEl.classList.add('fa-compress');
+                }
+                if (btnEl) {
+                    btnEl.classList.add('bg-[#2b53a7]', 'text-white');
+                    btnEl.classList.remove('text-[#2b53a7]');
+                    btnEl.title = "Thu nhỏ lại (Hiện lại khu vực khối lệnh - Phím Esc)";
+                }
+                if (typeof showCodeToast === 'function') {
+                    showCodeToast('Đã phóng to xem Sân khấu & Kết quả ✨ (Nhấn Esc để thu nhỏ)');
+                }
+            } else {
+                if (iconEl) {
+                    iconEl.classList.remove('fa-compress');
+                    iconEl.classList.add('fa-expand');
+                }
+                if (btnEl) {
+                    btnEl.classList.remove('bg-[#2b53a7]', 'text-white');
+                    btnEl.classList.add('text-[#2b53a7]');
+                    btnEl.title = "Phóng to xem Sân khấu & Kết quả (Ẩn khu vực khối lệnh)";
+                }
+                if (typeof Blockly !== 'undefined' && typeof workspace !== 'undefined' && workspace) {
+                    setTimeout(() => {
+                        Blockly.svgResize(workspace);
+                        if (typeof fixFlyoutScale === 'function') fixFlyoutScale();
+                    }, 60);
+                }
+            }
+
+            setTimeout(() => {
+                resizeCanvasDisplay();
+                if (typeof drawCanvas === 'function') drawCanvas();
+            }, 60);
+            setTimeout(() => {
+                resizeCanvasDisplay();
+                if (typeof drawCanvas === 'function') drawCanvas();
+            }, 200);
+        }
+        window.toggleStageExpandMode = toggleStageExpandMode;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const mainEl = document.getElementById('app-main');
+                if (mainEl && mainEl.classList.contains('stage-expanded')) {
+                    toggleStageExpandMode();
+                }
+            }
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(resizeCanvasDisplay, 100);
+            const stageContainer = document.getElementById('stage-canvas-container');
+            if (stageContainer && window.ResizeObserver) {
+                new ResizeObserver(() => {
+                    resizeCanvasDisplay();
+                }).observe(stageContainer);
+            }
+        });
+        window.addEventListener('resize', () => {
+            resizeCanvasDisplay();
+        });
     </script>
 
     <script>
@@ -1512,9 +1734,8 @@
                     code = jsGen.finish(code);
                     let asyncCode = `(async function() {\n${code}\n})().catch(err => handleError("Lỗi: " + err.message));`;
                     eval(asyncCode);
-                    // Chấm điểm tức thì (0ms) cho các bài toán Terminal / Biến số
-                    if (window.activeChallengeId && typeof checkCurrentChallenge === 'function') {
-                        checkCurrentChallenge(true);
+                    if (window.activeChallengeId) {
+                        addConsoleMessage("💡 Chú ý: Bạn đang làm Thử thách! Hãy chuyển sang chế độ '⌨️ Gõ Python' và tự viết code để được chấm điểm nhé.");
                     }
                     if (!executionTimer && !currentCommand && commandQueue.length > 0) {
                         startAnimationLoop();
@@ -1590,16 +1811,16 @@
                             currentCommand.endX = turtleState.x + dist * Math.cos(rad); currentCommand.endY = turtleState.y + dist * Math.sin(rad);
                         } else if (currentCommand.type === 'goto') {
                             currentCommand.startX = turtleState.x; currentCommand.startY = turtleState.y;
-                            currentCommand.endX = 300 + Number(currentCommand.x);
-                            currentCommand.endY = 170 - Number(currentCommand.y);
+                            currentCommand.endX = Math.round(canvas.width / 2) + Number(currentCommand.x);
+                            currentCommand.endY = Math.round(canvas.height / 2) - Number(currentCommand.y);
                         } else if (currentCommand.type === 'setx') {
                             currentCommand.startX = turtleState.x; currentCommand.startY = turtleState.y;
-                            currentCommand.endX = 300 + Number(currentCommand.x);
+                            currentCommand.endX = Math.round(canvas.width / 2) + Number(currentCommand.x);
                             currentCommand.endY = turtleState.y;
                         } else if (currentCommand.type === 'sety') {
                             currentCommand.startX = turtleState.x; currentCommand.startY = turtleState.y;
                             currentCommand.endX = turtleState.x;
-                            currentCommand.endY = 170 - Number(currentCommand.y);
+                            currentCommand.endY = Math.round(canvas.height / 2) - Number(currentCommand.y);
                         } else if (currentCommand.type === 'right' || currentCommand.type === 'left') {
                             currentCommand.startAngle = turtleState.angle;
                             currentCommand.endAngle = turtleState.angle + (currentCommand.type === 'left' ? -currentCommand.value : currentCommand.value);
@@ -1695,7 +1916,9 @@
                         currentCommand = null;
                     } else if (currentCommand.type === 'reset') {
                         paths = [];
-                        turtleState = { x: 300, y: 170, angle: 0, penDown: true, color: '#3b82f6', fillColor: '#f43f5e', width: 3, customBgColor: null, shape: null, isFilling: false, fillPoints: [], visible: true };
+                        const cx = Math.round(canvas.width / 2);
+                        const cy = Math.round(canvas.height / 2);
+                        turtleState = { x: cx, y: cy, angle: 0, penDown: true, color: '#3b82f6', fillColor: '#f43f5e', width: 2, customBgColor: null, shape: null, isFilling: false, fillPoints: [], visible: true };
                         currentCommand = null;
                     } else if (currentCommand.type === 'write') {
                         turtleState.speechBubble = { text: currentCommand.text, time: Date.now() };
@@ -1781,7 +2004,10 @@
                     } else if (currentCommand.type === 'clear') {
                         paths = []; turtleState.customBgColor = null; currentCommand = null;
                     } else if (currentCommand.type === 'home') {
-                        turtleState.x = 300; turtleState.y = 170; turtleState.angle = 0; currentCommand = null;
+                        turtleState.x = Math.round(canvas.width / 2);
+                        turtleState.y = Math.round(canvas.height / 2);
+                        turtleState.angle = 0;
+                        currentCommand = null;
                     } else if (currentCommand.type === 'print') {
                         if (!currentCommand.started) {
                             currentCommand.started = true;
@@ -1897,7 +2123,7 @@
                     return `<div class="py-1"><span class="text-indigo-600 font-bold">Bước ${index + 1}:</span> ${indentPrefix}${cleanLine}</div>`;
                 }).join('');
             }
-            let prefix = pythonRaw.includes('turtle') ? "import turtle\nt = turtle.Turtle()\n\n" : "";
+            let prefix = (pythonRaw.includes('t.') || pythonRaw.includes('turtle')) ? "import turtle\nt = turtle.Turtle()\n\n" : "";
             let fullPython = (prefix + pythonRaw).trim();
             if (fullPython === "") {
                 document.getElementById('python-preview').textContent = "# Hãy ghép các khối lệnh vào bên dưới khối 'Khi bấm nút chạy' nhé!";
@@ -1965,14 +2191,33 @@
         // Custom Flyout Scroll Logic
         function scrollToCategory(firstBlockType) {
             playClick();
+            if (typeof workspace === 'undefined' || !workspace) return;
             const flyout = workspace.getFlyout();
             if (flyout) {
                 const flyoutWs = flyout.getWorkspace();
+                if (!flyoutWs) return;
                 let targetBlock = flyoutWs.getTopBlocks(false).find(b => b.type === firstBlockType);
                 let targetY = targetBlock ? targetBlock.getRelativeToSurfaceXY().y : 0;
-                if (firstBlockType === 'variables_set' && flyout.buttons_.length > 0) targetY = flyout.buttons_[0].info_.y;
+                if (firstBlockType === 'variables_set' && flyout.buttons_ && flyout.buttons_.length > 0 && flyout.buttons_[0].info_) {
+                    targetY = flyout.buttons_[0].info_.y;
+                }
                 if (flyoutWs.scrollbar) flyoutWs.scrollbar.setY(Math.max(0, (targetY * flyoutWs.scale) - 40));
             }
+        }
+
+        function getWorkspaceVariables(ws) {
+            if (!ws) return [];
+            try {
+                if (typeof ws.getAllVariables === 'function') return ws.getAllVariables();
+                if (typeof ws.getVariableMap === 'function' && ws.getVariableMap()) {
+                    const map = ws.getVariableMap();
+                    if (typeof map.getAllVariables === 'function') return map.getAllVariables();
+                }
+                if (typeof Blockly !== 'undefined' && Blockly.Variables && typeof Blockly.Variables.allVariables === 'function') {
+                    return Blockly.Variables.allVariables(ws);
+                }
+            } catch (e) { }
+            return [];
         }
     </script>
 
@@ -2005,63 +2250,99 @@
                 }
             };
 
-            const toolboxXml = `
-                <xml id="toolbox" style="display: none">
-                    <label text="In ấn / Nhập liệu"></label>
-                    <block type="text"></block>
-                    <block type="text_join"></block>
-                    <block type="py_print"><value name="TEXT"><block type="text"><field name="TEXT">Xin chào thế giới!</field></block></value></block>
-                    <block type="py_input"><value name="TEXT"><block type="text"><field name="TEXT">Tên bạn là gì?</field></block></value></block>
+            function cleanUnwantedVariables(ws) {
+                if (!ws) return;
+                const vars = getWorkspaceVariables(ws);
+                vars.forEach(v => {
+                    if (v.name === 'vật' || v.name === 'item') {
+                        try {
+                            if (ws.getVariableMap && typeof ws.getVariableMap().deleteVariable === 'function') {
+                                ws.getVariableMap().deleteVariable(v);
+                            } else if (typeof ws.deleteVariableById === 'function') {
+                                ws.deleteVariableById(v.getId ? v.getId() : v.id_);
+                            }
+                        } catch (e) { }
+                    }
+                });
+            }
 
-                    <label text="Biến số"></label>
-                    <button text="Tạo biến số mới..." callbackKey="CREATE_VARIABLE"></button>
-                    <block type="variables_set"></block>
-                    <block type="variables_get"></block>
+            function getToolboxXml(hasVariables) {
+                let varBlocks = '';
+                if (hasVariables && typeof workspace !== 'undefined' && workspace) {
+                    const validVars = getWorkspaceVariables(workspace).filter(v => v.name !== 'vật' && v.name !== 'item');
+                    if (validVars.length > 0) {
+                        const firstVar = validVars[0];
+                        const vId = firstVar.getId ? firstVar.getId() : firstVar.id_;
+                        const vName = firstVar.name;
+                        varBlocks = `
+                        <button text="Xóa biến số..." callbackKey="DELETE_VARIABLE"></button>
+                        <block type="variables_set">
+                            <field name="VAR" id="${vId}">${vName}</field>
+                        </block>
+                        <block type="variables_get">
+                            <field name="VAR" id="${vId}">${vName}</field>
+                        </block>
+                        `;
+                    }
+                }
+                return `
+                    <xml id="toolbox" style="display: none">
+                        <label text="In ấn / Nhập liệu"></label>
+                        <block type="text"></block>
+                        <block type="text_join"></block>
+                        <block type="py_print"><value name="TEXT"><block type="text"><field name="TEXT">Xin chào thế giới!</field></block></value></block>
+                        <block type="py_input"><value name="TEXT"><block type="text"><field name="TEXT">Tên bạn là gì?</field></block></value></block>
 
-                    <label text="Toán số"></label>
-                    <block type="math_number"><field name="NUM">0</field></block>
-                    <block type="math_arithmetic"></block>
-                    <block type="py_to_int"></block>
-                    <block type="py_to_float"></block>
+                        <label text="Biến số"></label>
+                        <button text="Tạo biến số mới..." callbackKey="CREATE_VARIABLE"></button>
+                        ${varBlocks}
 
-                    <label text="Điều kiện"></label>
-                    <block type="controls_if"></block>
-                    <block type="logic_compare"></block>
-                    <block type="logic_operation"></block>
+                        <label text="Toán số"></label>
+                        <block type="math_number"><field name="NUM">0</field></block>
+                        <block type="math_arithmetic"></block>
+                        <block type="py_to_int"></block>
+                        <block type="py_to_float"></block>
 
-                    <label text="Vòng lặp"></label>
-                    <block type="controls_whileUntil"></block>
-                    <block type="controls_for">
-                        <field name="VAR">i</field>
-                        <value name="FROM"><block type="math_number"><field name="NUM">1</field></block></value>
-                        <value name="TO"><block type="math_number"><field name="NUM">10</field></block></value>
-                        <value name="BY"><block type="math_number"><field name="NUM">1</field></block></value>
-                    </block>
+                        <label text="Điều kiện"></label>
+                        <block type="controls_if"></block>
+                        <block type="logic_compare"></block>
+                        <block type="logic_operation"></block>
 
-                    <label text="Bút vẽ"></label>
-                    <block type="turtle_pen"></block>
-                    <block type="turtle_color"></block>
-                    <block type="turtle_bgcolor"><field name="COLOR">#bae6fd</field></block>
-                    <block type="turtle_width"><value name="WIDTH"><block type="math_number"><field name="NUM">3</field></block></value></block>
-                    <block type="turtle_begin_fill"></block>
-                    <block type="turtle_end_fill"></block>
-                    <block type="turtle_shape"></block>
-                    <block type="turtle_speed"><value name="SPEED"><block type="math_number"><field name="NUM">5</field></block></value></block>
+                        <label text="Vòng lặp"></label>
+                        <block type="controls_whileUntil"></block>
+                        <block type="controls_for">
+                            <field name="VAR">i</field>
+                            <value name="FROM"><block type="math_number"><field name="NUM">1</field></block></value>
+                            <value name="TO"><block type="math_number"><field name="NUM">10</field></block></value>
+                            <value name="BY"><block type="math_number"><field name="NUM">1</field></block></value>
+                        </block>
 
-                    <label text="Di chuyển"></label>
-                    <block type="turtle_circle"><value name="RADIUS"><block type="math_number"><field name="NUM">90</field></block></value></block>
-                    <block type="turtle_forward"><value name="STEPS"><block type="math_number"><field name="NUM">100</field></block></value></block>
-                    <block type="turtle_backward"><value name="STEPS"><block type="math_number"><field name="NUM">50</field></block></value></block>
-                    <block type="turtle_right"><value name="DEGREES"><block type="math_number"><field name="NUM">90</field></block></value></block>
-                    <block type="turtle_left"><value name="DEGREES"><block type="math_number"><field name="NUM">90</field></block></value></block>
-                    <block type="turtle_home"></block>
-                    <block type="turtle_clear"></block>
-                </xml>
-            `;
-            const div = document.createElement('div'); div.innerHTML = toolboxXml; document.body.appendChild(div);
+                        <label text="Bút vẽ"></label>
+                        <block type="turtle_pen"></block>
+                        <block type="turtle_color"></block>
+                        <block type="turtle_bgcolor"><field name="COLOR">#bae6fd</field></block>
+                        <block type="turtle_width"><value name="WIDTH"><block type="math_number"><field name="NUM">2</field></block></value></block>
+                        <block type="turtle_begin_fill"></block>
+                        <block type="turtle_end_fill"></block>
+                        <block type="turtle_shape"></block>
+                        <block type="turtle_speed"><value name="SPEED"><block type="math_number"><field name="NUM">5</field></block></value></block>
 
-            // Đổi tên biến mặc định từ 'vật' (dịch máy) sang một tên có ý nghĩa hơn trong lập trình
-            if (Blockly.Msg) Blockly.Msg['VARIABLES_DEFAULT_NAME'] = 'a';
+                        <label text="Di chuyển"></label>
+                        <block type="turtle_circle"><value name="RADIUS"><block type="math_number"><field name="NUM">90</field></block></value></block>
+                        <block type="turtle_forward"><value name="STEPS"><block type="math_number"><field name="NUM">100</field></block></value></block>
+                        <block type="turtle_backward"><value name="STEPS"><block type="math_number"><field name="NUM">50</field></block></value></block>
+                        <block type="turtle_right"><value name="DEGREES"><block type="math_number"><field name="NUM">90</field></block></value></block>
+                        <block type="turtle_left"><value name="DEGREES"><block type="math_number"><field name="NUM">90</field></block></value></block>
+                        <block type="turtle_home"></block>
+                        <block type="turtle_clear"></block>
+                    </xml>
+                `;
+            }
+
+            const toolboxHolder = document.createElement('div');
+            toolboxHolder.id = 'toolbox-container';
+            toolboxHolder.innerHTML = getToolboxXml(false);
+            document.body.appendChild(toolboxHolder);
 
             const initialScale = (window.innerWidth < 1400) ? 0.82 : 0.95;
             workspace = Blockly.inject('blockly-editor', {
@@ -2070,6 +2351,23 @@
                 grid: { spacing: 25, length: 3, colour: '#cbd5e1', snap: true },
                 zoom: { controls: true, wheel: false, startScale: initialScale, maxScale: 3.0, minScale: 0.01, scaleSpeed: 1.2, pinch: true }
             });
+            window.workspace = workspace;
+
+            // Đảm bảo ban đầu không có biến số mặc định nào
+            cleanUnwantedVariables(workspace);
+            const initialVars = getWorkspaceVariables(workspace);
+            if (initialVars.length > 0) {
+                initialVars.forEach(v => {
+                    try {
+                        if (workspace.getVariableMap && typeof workspace.getVariableMap().deleteVariable === 'function') {
+                            workspace.getVariableMap().deleteVariable(v);
+                        } else if (typeof workspace.deleteVariableById === 'function') {
+                            workspace.deleteVariableById(v.getId ? v.getId() : v.id_);
+                        }
+                    } catch (e) { }
+                });
+            }
+            workspace._hasVariableBlocks = false;
 
             // Khởi tạo khối bắt đầu mặc định và không cho phép xóa
             const defaultStartBlock = workspace.newBlock('event_start');
@@ -2090,7 +2388,83 @@
                 };
             } catch (e) { }
 
-            workspace.registerButtonCallback('CREATE_VARIABLE', function (button) { Blockly.Variables.createVariableButtonHandler(button.getTargetWorkspace()); });
+        function parseXmlToDom(xmlText) {
+            if (typeof Blockly !== 'undefined') {
+                if (Blockly.utils && Blockly.utils.xml && typeof Blockly.utils.xml.textToDom === 'function') {
+                    return Blockly.utils.xml.textToDom(xmlText);
+                }
+                if (Blockly.Xml && typeof Blockly.Xml.textToDom === 'function') {
+                    return Blockly.Xml.textToDom(xmlText);
+                }
+            }
+            try {
+                const parser = new DOMParser();
+                return parser.parseFromString(xmlText, 'text/xml').documentElement;
+            } catch (e) {
+                console.error("parseXmlToDom error:", e);
+                return null;
+            }
+        }
+
+        function updateVariableBlocksInToolbox() {
+            if (!workspace) return;
+            cleanUnwantedVariables(workspace);
+            const validVars = getWorkspaceVariables(workspace).filter(v => v.name !== 'vật' && v.name !== 'item');
+            const hasVars = validVars.length > 0;
+            if (workspace._hasVariableBlocks === hasVars && hasVars === false) return;
+            workspace._hasVariableBlocks = hasVars;
+
+            const flyout = workspace.getFlyout();
+            let prevScrollY = 0;
+            if (flyout && flyout.getWorkspace() && flyout.getWorkspace().scrollbar) {
+                prevScrollY = flyout.getWorkspace().scrollY;
+            }
+
+            let xmlDom = null;
+            const xmlStr = getToolboxXml(hasVars);
+            let tbEl = document.getElementById('toolbox');
+            if (tbEl) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = xmlStr;
+                const newXml = tempDiv.querySelector('xml');
+                if (newXml) {
+                    tbEl.innerHTML = newXml.innerHTML;
+                    xmlDom = tbEl;
+                }
+            }
+            if (!xmlDom) {
+                xmlDom = parseXmlToDom(xmlStr);
+            }
+
+            if (xmlDom) {
+                workspace.updateToolbox(xmlDom);
+                cleanUnwantedVariables(workspace);
+            }
+
+            if (typeof fixFlyoutScale === 'function') {
+                fixFlyoutScale();
+            }
+
+            if (flyout && flyout.getWorkspace() && flyout.getWorkspace().scrollbar && prevScrollY !== 0) {
+                try {
+                    flyout.getWorkspace().scrollbar.setY(Math.abs(prevScrollY));
+                } catch (e) { }
+            }
+        }
+        window.updateVariableBlocksInToolbox = updateVariableBlocksInToolbox;
+
+        workspace.registerButtonCallback('CREATE_VARIABLE', function (button) {
+            const targetWs = (button && typeof button.getTargetWorkspace === 'function') ? button.getTargetWorkspace() : workspace;
+            Blockly.Variables.createVariableButtonHandler(targetWs, function () {
+                updateVariableBlocksInToolbox();
+            });
+        });
+
+        workspace.registerButtonCallback('DELETE_VARIABLE', function () {
+            if (typeof openDeleteVariableModal === 'function') {
+                openDeleteVariableModal();
+            }
+        });
 
             // Dynamic responsive flyout metrics
             const getTargetFlyoutMetrics = () => {
@@ -2172,6 +2546,9 @@
 
             registerAllGenerators();
             workspace.addChangeListener((e) => {
+                if (e.type === Blockly.Events.VAR_CREATE || e.type === Blockly.Events.VAR_DELETE || e.type === Blockly.Events.VAR_RENAME) {
+                    updateVariableBlocksInToolbox();
+                }
                 if (e.isUiEvent) return;
                 if (e.type === Blockly.Events.BLOCK_FIELD_INTERMEDIATE_CHANGE) return;
                 if (e.type === Blockly.Events.FINISHED_LOADING) fixFlyoutScale();
@@ -2262,6 +2639,286 @@
             box.classList.add('scale-95');
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
+    </script>
+
+    <!-- Modal Xóa Biến Số -->
+    <div id="delete-variable-modal"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[9999] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-[450px] max-w-[92%] transform scale-95 transition-transform duration-300"
+            id="delete-variable-box">
+            <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xl">
+                        🗑️
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800" id="delete-var-modal-title">Xóa biến số</h3>
+                        <p class="text-xs text-slate-500">Quản lý và xóa biến số khỏi chương trình</p>
+                    </div>
+                </div>
+                <button onclick="closeDeleteVariableModal()" class="text-slate-400 hover:text-slate-600 cursor-pointer p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div id="delete-var-modal-content" class="my-4">
+                <!-- Nội dung xóa biến sẽ được điền ở đây -->
+            </div>
+            <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100" id="delete-var-modal-actions">
+                <button id="delete-var-cancel-btn" onclick="closeDeleteVariableModal()" class="px-4 py-2 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer text-sm">Hủy</button>
+                <button id="delete-var-confirm-btn" class="px-5 py-2 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 shadow-md shadow-red-200 transition-colors cursor-pointer text-sm hidden">Xác nhận xóa</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function getVariableUses(varName, varId) {
+            if (!workspace) return [];
+            let uses = [];
+            if (workspace.getVariableUsesById && varId) {
+                try {
+                    uses = workspace.getVariableUsesById(varId) || [];
+                } catch (e) { }
+            }
+            try {
+                const blocks = workspace.getAllBlocks(false);
+                blocks.forEach(b => {
+                    if (b.type === 'variables_set' || b.type === 'variables_get') {
+                        const f = b.getField('VAR');
+                        if (f && (f.getValue() === varId || f.getText() === varName)) {
+                            if (!uses.includes(b)) uses.push(b);
+                        }
+                    } else if (typeof b.getVars === 'function') {
+                        const vars = b.getVars();
+                        if (vars && vars.includes(varName)) {
+                            if (!uses.includes(b)) uses.push(b);
+                        }
+                    }
+                });
+            } catch (e) { }
+            return uses;
+        }
+
+        function openDeleteVariableModal() {
+            if (!workspace) return;
+            const validVars = getWorkspaceVariables(workspace).filter(v => v.name !== 'vật' && v.name !== 'item');
+            if (validVars.length === 0) {
+                showErrorAlert("Chưa có biến số nào được tạo!");
+                return;
+            }
+
+            const modal = document.getElementById('delete-variable-modal');
+            const box = document.getElementById('delete-variable-box');
+            const titleEl = document.getElementById('delete-var-modal-title');
+            const contentEl = document.getElementById('delete-var-modal-content');
+            const confirmBtn = document.getElementById('delete-var-confirm-btn');
+            const cancelBtn = document.getElementById('delete-var-cancel-btn');
+
+            titleEl.textContent = "Xóa biến số";
+
+            if (validVars.length === 1) {
+                const v = validVars[0];
+                const vId = v.getId ? v.getId() : v.id_;
+                const uses = getVariableUses(v.name, vId);
+                const isUsed = uses && uses.length > 0;
+
+                if (isUsed) {
+                    contentEl.innerHTML = `
+                        <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-slate-700 text-sm leading-relaxed">
+                            <div class="flex items-center text-amber-700 font-bold text-sm mb-2">
+                                <i class="fa-solid fa-lock text-base mr-2"></i> Không thể xóa biến đang sử dụng
+                            </div>
+                            <p class="text-slate-600 text-xs leading-relaxed">
+                                Biến số <b class="text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-300">${v.name}</b> đang được ghép vào <b>${uses.length}</b> khối lệnh để chạy chương trình.
+                            </p>
+                            <p class="text-xs text-slate-500 mt-2.5">
+                                💡 Bạn chỉ có thể xóa các biến chưa sử dụng. Hãy gỡ hoặc xóa các khối lệnh đang dùng biến <b>${v.name}</b> trên màn hình trước khi xóa biến này nhé!
+                            </p>
+                        </div>
+                    `;
+                    confirmBtn.classList.add('hidden');
+                    if (cancelBtn) cancelBtn.textContent = 'Đã hiểu';
+                } else {
+                    contentEl.innerHTML = `
+                        <p class="text-slate-600 text-sm leading-relaxed">Bạn có chắc chắn muốn xóa biến số <span class="font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-lg border border-red-200">${v.name}</span> (chưa ghép vào khối lệnh nào) khỏi chương trình?</p>
+                    `;
+                    confirmBtn.classList.remove('hidden');
+                    confirmBtn.textContent = 'Xác nhận xóa';
+                    if (cancelBtn) cancelBtn.textContent = 'Hủy';
+                    confirmBtn.onclick = () => {
+                        executeDeleteVariable(v.name);
+                        closeDeleteVariableModal();
+                    };
+                }
+            } else {
+                confirmBtn.classList.add('hidden');
+                if (cancelBtn) cancelBtn.textContent = 'Đóng';
+                let unusedCount = 0;
+                let html = `<p class="text-slate-600 text-xs mb-3 font-medium">Chỉ được xóa biến chưa dùng. Biến đang ghép trong khối lệnh sẽ bị khóa:</p><div class="space-y-2 max-h-[240px] overflow-y-auto pr-1">`;
+                validVars.forEach(v => {
+                    const vId = v.getId ? v.getId() : v.id_;
+                    const uses = getVariableUses(v.name, vId);
+                    const isUsed = uses && uses.length > 0;
+                    if (!isUsed) unusedCount++;
+
+                    if (isUsed) {
+                        html += `
+                            <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50/80">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                                    <span class="font-bold text-slate-700 text-sm">${v.name}</span>
+                                    <span class="text-[11px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 font-semibold flex items-center">
+                                        <i class="fa-solid fa-lock text-[10px] mr-1"></i> Đang dùng (${uses.length} khối)
+                                    </span>
+                                </div>
+                                <button disabled class="px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-400 bg-slate-100 border border-slate-200 cursor-not-allowed flex items-center" title="Biến đang được ghép vào khối lệnh để chạy chương trình, không thể xóa">
+                                    <i class="fa-solid fa-ban text-[11px] mr-1"></i> Khóa
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-red-50/40 hover:border-red-200 transition-all shadow-xs">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                    <span class="font-bold text-slate-800 text-sm">${v.name}</span>
+                                    <span class="text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 font-semibold flex items-center">
+                                        <i class="fa-solid fa-check text-[10px] mr-1"></i> Chưa ghép
+                                    </span>
+                                </div>
+                                <button onclick="confirmSingleDeleteFromList('${v.name}')" class="px-3 py-1 rounded-lg text-xs font-bold text-red-600 bg-red-100 hover:bg-red-200 transition-colors cursor-pointer flex items-center shadow-xs">
+                                    <i class="fa-solid fa-trash-can text-[11px] mr-1"></i> Xóa
+                                </button>
+                            </div>
+                        `;
+                    }
+                });
+                html += `</div>`;
+                if (unusedCount === 0) {
+                    html += `
+                        <div class="mt-3 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center space-x-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm shrink-0"></i>
+                            <span>Tất cả biến đều đang được ghép vào khối lệnh để chạy chương trình. Bạn cần gỡ bỏ các khối lệnh sử dụng biến trước khi xóa.</span>
+                        </div>
+                    `;
+                }
+                contentEl.innerHTML = html;
+            }
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+        }
+
+        function confirmSingleDeleteFromList(varName) {
+            const modal = document.getElementById('delete-variable-modal');
+            const box = document.getElementById('delete-variable-box');
+            const contentEl = document.getElementById('delete-var-modal-content');
+            const confirmBtn = document.getElementById('delete-var-confirm-btn');
+            const cancelBtn = document.getElementById('delete-var-cancel-btn');
+            if (!workspace) return;
+            const allVars = getWorkspaceVariables(workspace);
+            const targetVar = allVars.find(v => v.name === varName);
+            const vId = targetVar ? (targetVar.getId ? targetVar.getId() : targetVar.id_) : null;
+            const uses = getVariableUses(varName, vId);
+            const isUsed = uses && uses.length > 0;
+
+            if (isUsed) {
+                contentEl.innerHTML = `
+                    <div class="flex items-center space-x-2 mb-3">
+                        <button onclick="openDeleteVariableModal()" class="text-xs text-indigo-600 hover:underline font-bold cursor-pointer">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại danh sách
+                        </button>
+                    </div>
+                    <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-slate-700 text-sm leading-relaxed mb-2">
+                        <div class="flex items-center text-amber-700 font-bold text-sm mb-1.5">
+                            <i class="fa-solid fa-lock text-base mr-2"></i> Không thể xóa biến "${varName}"
+                        </div>
+                        <p class="text-slate-600 text-xs leading-relaxed">
+                            Biến số <b>${varName}</b> đang được ghép vào <b>${uses.length}</b> khối lệnh để chạy chương trình. Bạn chỉ có thể xóa các biến chưa được sử dụng.
+                        </p>
+                        <p class="text-xs text-slate-500 mt-2">
+                            💡 Vui lòng gỡ hoặc xóa các khối lệnh đang dùng biến <b>${varName}</b> trước nhé!
+                        </p>
+                    </div>
+                `;
+                confirmBtn.classList.add('hidden');
+                if (cancelBtn) cancelBtn.textContent = 'Đã hiểu';
+            } else {
+                contentEl.innerHTML = `
+                    <div class="flex items-center space-x-2 mb-3">
+                        <button onclick="openDeleteVariableModal()" class="text-xs text-indigo-600 hover:underline font-bold cursor-pointer">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại danh sách
+                        </button>
+                    </div>
+                    <p class="text-slate-600 text-sm leading-relaxed">Bạn có chắc chắn muốn xóa biến số <span class="font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-lg border border-red-200">${varName}</span> (chưa ghép vào khối lệnh nào) khỏi chương trình?</p>
+                `;
+                confirmBtn.classList.remove('hidden');
+                confirmBtn.textContent = 'Xác nhận xóa';
+                if (cancelBtn) cancelBtn.textContent = 'Hủy';
+                confirmBtn.onclick = () => {
+                    executeDeleteVariable(varName);
+                    closeDeleteVariableModal();
+                };
+            }
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+        }
+
+        function executeDeleteVariable(varName) {
+            if (!workspace || !varName) return;
+            const allVars = getWorkspaceVariables(workspace);
+            const targetVar = allVars.find(v => v.name === varName);
+            if (targetVar) {
+                const varId = targetVar.getId ? targetVar.getId() : targetVar.id_;
+                const uses = getVariableUses(varName, varId);
+                if (uses && uses.length > 0) {
+                    showErrorAlert(`Không thể xóa biến "${varName}" vì biến đang được ghép vào ${uses.length} khối lệnh để chạy chương trình!`);
+                    return;
+                }
+                try {
+                    // Xóa biến khỏi VariableMap của workspace chính
+                    if (workspace.getVariableMap && typeof workspace.getVariableMap().deleteVariable === 'function') {
+                        workspace.getVariableMap().deleteVariable(targetVar);
+                    } else if (typeof Blockly !== 'undefined' && Blockly.Variables && typeof Blockly.Variables.deleteVariable === 'function') {
+                        Blockly.Variables.deleteVariable(workspace, targetVar);
+                    } else if (typeof workspace.deleteVariableById === 'function') {
+                        workspace.deleteVariableById(varId);
+                    }
+
+                    // Xóa biến khỏi flyout workspace nếu có
+                    const flyout = workspace.getFlyout();
+                    if (flyout && flyout.getWorkspace && flyout.getWorkspace()) {
+                        const flyoutWs = flyout.getWorkspace();
+                        if (flyoutWs.getVariableMap && typeof flyoutWs.getVariableMap().deleteVariable === 'function') {
+                            const flyoutVar = flyoutWs.getVariableMap().getVariable(varName);
+                            if (flyoutVar) {
+                                flyoutWs.getVariableMap().deleteVariable(flyoutVar);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Lỗi khi xóa biến:", e);
+                }
+            }
+            delete window.activeVariables[varName];
+            updateVariableBlocksInToolbox();
+            initVariableWatcher();
+        }
+
+        function closeDeleteVariableModal() {
+            const modal = document.getElementById('delete-variable-modal');
+            const box = document.getElementById('delete-variable-box');
+            modal.classList.add('opacity-0');
+            box.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+        window.openDeleteVariableModal = openDeleteVariableModal;
+        window.closeDeleteVariableModal = closeDeleteVariableModal;
+        window.confirmSingleDeleteFromList = confirmSingleDeleteFromList;
+        window.executeDeleteVariable = executeDeleteVariable;
     </script>
 
     <!-- Modals cho Nhập liệu và Biến số -->
@@ -2502,11 +3159,15 @@
                 window.activeVariables = {};
             }
             if (typeof workspace !== 'undefined' && workspace) {
-                const allVars = workspace.getAllVariables ? workspace.getAllVariables() : (workspace.getVariableMap ? workspace.getVariableMap().getAllVariables() : []);
+                if (typeof cleanUnwantedVariables === 'function') {
+                    cleanUnwantedVariables(workspace);
+                }
+                const allVars = (typeof getWorkspaceVariables === 'function' ? getWorkspaceVariables(workspace) : (workspace.getAllVariables ? workspace.getAllVariables() : (workspace.getVariableMap ? workspace.getVariableMap().getAllVariables() : [])))
+                    .filter(v => v.name !== 'vật' && v.name !== 'item');
                 const activeKeys = Object.keys(window.activeVariables);
                 const varNames = allVars.map(v => v.name);
                 activeKeys.forEach(k => {
-                    if (!varNames.includes(k)) {
+                    if (!varNames.includes(k) || k === 'vật' || k === 'item') {
                         delete window.activeVariables[k];
                     }
                 });
@@ -2719,57 +3380,57 @@
             {
                 category: 'all',
                 syntaxHtml: '<span class="text-purple-600 font-bold">import</span> turtle<br/><span class="text-blue-600 font-bold">t</span> = turtle.Turtle()',
-                example: 'import turtle\nt = turtle.Turtle()',
+                example: 't = turtle.Turtle()',
                 desc: 'Khởi tạo: Nạp thư viện và tạo đối tượng rùa t',
                 keywords: 'import turtle khoi tao bat dau khai bao setup'
             },
             // 🐢 DI CHUYỂN (Tương ứng các khối trong mục "Di chuyển")
             {
                 category: 'move',
-                syntaxHtml: 'turtle.forward(<span class="text-amber-600 font-semibold">số_bước</span>)',
+                syntaxHtml: 't.forward(<span class="text-amber-600 font-semibold">số_bước</span>)',
                 example: 't.forward(100)',
-                desc: 'Khối: Tiến ... bước (hoặc t.forward)',
+                desc: 'Khối: Tiến ... bước',
                 keywords: 'tien forward buoc di chuyen turtle_forward'
             },
             {
                 category: 'move',
-                syntaxHtml: 'turtle.backward(<span class="text-amber-600 font-semibold">số_bước</span>)',
-                example: 'turtle.backward(50)',
-                desc: 'Khối: Lùi ... bước (hoặc t.backward)',
+                syntaxHtml: 't.backward(<span class="text-amber-600 font-semibold">số_bước</span>)',
+                example: 't.backward(50)',
+                desc: 'Khối: Lùi ... bước',
                 keywords: 'lui backward buoc di chuyen turtle_backward'
             },
             {
                 category: 'move',
-                syntaxHtml: 'turtle.right(<span class="text-amber-600 font-semibold">góc_độ</span>)',
-                example: 'turtle.right(90)',
-                desc: 'Khối: Xoay phải ... độ ↻ (hoặc t.right)',
+                syntaxHtml: 't.right(<span class="text-amber-600 font-semibold">góc_độ</span>)',
+                example: 't.right(90)',
+                desc: 'Khối: Xoay phải ... độ ↻',
                 keywords: 'xoay phai right re phai goc turtle_right'
             },
             {
                 category: 'move',
-                syntaxHtml: 'turtle.left(<span class="text-amber-600 font-semibold">góc_độ</span>)',
-                example: 'turtle.left(90)',
-                desc: 'Khối: Xoay trái ... độ ↺ (hoặc t.left)',
+                syntaxHtml: 't.left(<span class="text-amber-600 font-semibold">góc_độ</span>)',
+                example: 't.left(90)',
+                desc: 'Khối: Xoay trái ... độ ↺',
                 keywords: 'xoay trai left re trai goc turtle_left'
             },
             {
                 category: 'move',
-                syntaxHtml: 'turtle.circle(<span class="text-amber-600 font-semibold">bán_kính</span>)',
-                example: 'turtle.circle(90)',
+                syntaxHtml: 't.circle(<span class="text-amber-600 font-semibold">bán_kính</span>)',
+                example: 't.circle(90)',
                 desc: 'Khối: Vẽ hình tròn bán kính ...',
                 keywords: 'circle hinh tron ban kinh ve tron turtle_circle'
             },
             {
                 category: 'move',
-                syntaxHtml: 'turtle.home()',
-                example: 'turtle.home()',
+                syntaxHtml: 't.home()',
+                example: 't.home()',
                 desc: 'Khối: Về Trung tâm (tọa độ 0, 0)',
                 keywords: 'home ve nha trung tam goc toa do turtle_home'
             },
             {
                 category: 'move',
-                syntaxHtml: 'turtle.clear()',
-                example: 'turtle.clear()',
+                syntaxHtml: 't.clear()',
+                example: 't.clear()',
                 desc: 'Khối: Xóa tranh đã vẽ',
                 keywords: 'clear xoa tranh lam sach lau bang turtle_clear'
             },
@@ -2777,64 +3438,64 @@
             // 🎨 BÚT VẼ (Tương ứng các khối trong mục "Bút vẽ")
             {
                 category: 'pen',
-                syntaxHtml: 'turtle.pendown()',
-                example: 'turtle.pendown()',
+                syntaxHtml: 't.pendown()',
+                example: 't.pendown()',
                 desc: 'Khối: Trạng thái bút: Hạ bút (Bắt đầu vẽ)',
                 keywords: 'pendown ha but bat dau ve turtle_pen'
             },
             {
                 category: 'pen',
-                syntaxHtml: 'turtle.penup()',
-                example: 'turtle.penup()',
+                syntaxHtml: 't.penup()',
+                example: 't.penup()',
                 desc: 'Khối: Trạng thái bút: Nhấc bút (Dừng vẽ)',
                 keywords: 'penup nhac but dung ve ngung ve turtle_pen'
             },
             {
                 category: 'pen',
-                syntaxHtml: 'turtle.color(<span class="text-amber-600 font-semibold">"nét"</span>, <span class="text-amber-600 font-semibold">"tô"</span>)',
-                example: 'turtle.color("#3b82f6", "#f43f5e")',
+                syntaxHtml: 't.color(<span class="text-amber-600 font-semibold">"nét"</span>, <span class="text-amber-600 font-semibold">"tô"</span>)',
+                example: 't.color("#3b82f6", "#f43f5e")',
                 desc: 'Khối: Đổi màu: Nét ... Tô ...',
                 keywords: 'color doi mau mau net mau to turtle_color'
             },
             {
                 category: 'pen',
-                syntaxHtml: 'turtle.bgcolor(<span class="text-amber-600 font-semibold">"màu"</span>)',
-                example: 'turtle.bgcolor("#bae6fd")',
+                syntaxHtml: 't.bgcolor(<span class="text-amber-600 font-semibold">"màu"</span>)',
+                example: 't.bgcolor("#bae6fd")',
                 desc: 'Khối: Đổi màu nền sân khấu',
                 keywords: 'bgcolor mau nen san khau background turtle_bgcolor'
             },
             {
                 category: 'pen',
-                syntaxHtml: 'turtle.width(<span class="text-amber-600 font-semibold">độ_dày</span>)',
-                example: 'turtle.width(3)',
+                syntaxHtml: 't.width(<span class="text-amber-600 font-semibold">độ_dày</span>)',
+                example: 't.width(3)',
                 desc: 'Khối: Đổi kích thước nét vẽ',
                 keywords: 'width do day net ve kich thuoc but pensize turtle_width'
             },
             {
                 category: 'pen',
-                syntaxHtml: 'turtle.begin_fill()',
-                example: 'turtle.begin_fill()',
+                syntaxHtml: 't.begin_fill()',
+                example: 't.begin_fill()',
                 desc: 'Khối: Bắt đầu tô màu vùng khép kín',
                 keywords: 'begin_fill bat dau to mau turtle_begin_fill'
             },
             {
                 category: 'pen',
-                syntaxHtml: 'turtle.end_fill()',
-                example: 'turtle.end_fill()',
+                syntaxHtml: 't.end_fill()',
+                example: 't.end_fill()',
                 desc: 'Khối: Kết thúc tô màu (đổ màu vào hình)',
                 keywords: 'end_fill ket thuc to mau turtle_end_fill'
             },
             {
                 category: 'pen',
-                syntaxHtml: 'turtle.shape(<span class="text-amber-600 font-semibold">"hình_dáng"</span>)',
-                example: 'turtle.shape("turtle")',
+                syntaxHtml: 't.shape(<span class="text-amber-600 font-semibold">"hình_dáng"</span>)',
+                example: 't.shape("turtle")',
                 desc: 'Khối: Đổi hình dáng bút ("turtle", "cat", "rabbit",...)',
                 keywords: 'shape doi hinh dang but rua meo tho turtle_shape'
             },
             {
                 category: 'pen',
-                syntaxHtml: 'turtle.speed(<span class="text-amber-600 font-semibold">tốc_độ</span>)',
-                example: 'turtle.speed(5)',
+                syntaxHtml: 't.speed(<span class="text-amber-600 font-semibold">tốc_độ</span>)',
+                example: 't.speed(5)',
                 desc: 'Khối: Chỉnh tốc độ vẽ (1 đến 10)',
                 keywords: 'speed toc do ve nhanh cham turtle_speed'
             },
@@ -2843,14 +3504,14 @@
             {
                 category: 'loop',
                 syntaxHtml: 'for <span class="text-amber-600 font-semibold">i</span> in range(<span class="text-amber-600 font-semibold">từ</span>, <span class="text-amber-600 font-semibold">đến</span>):',
-                example: 'for i in range(1, 11):\n    turtle.forward(50)\n    turtle.right(90)',
+                example: 'for i in range(1, 11):\n    t.forward(50)\n    t.right(90)',
                 desc: 'Khối: Lặp với i từ ... đến ...',
                 keywords: 'for loop range vong lap controls_for'
             },
             {
                 category: 'loop',
                 syntaxHtml: 'while <span class="text-amber-600 font-semibold">điều_kiện</span>:',
-                example: 'while a < 10:\n    turtle.forward(20)\n    a = a + 1',
+                example: 'while a < 10:\n    t.forward(20)\n    a = a + 1',
                 desc: 'Khối: Lặp trong khi điều kiện đúng',
                 keywords: 'while loop lap trong khi controls_whileUntil'
             },
@@ -4130,51 +4791,60 @@ for i in range(4):
                 }
             },
             {
-                id: 'draw_triangle',
+                id: 'draw_hexagon',
                 level: 2,
                 levelName: 'Cấp độ 2: Họa sĩ hình học',
                 levelColor: '#f59e0b',
-                title: 'Thử thách 5: Tam giác sắc màu 🔺',
-                desc: 'Đổi màu bút sang màu đỏ (<code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">red</code>) và vẽ hình tam giác đều khép kín có cạnh là <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">120</code> bước (góc rẽ <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">120°</code>).',
+                title: 'Thử thách 5: Lục giác tổ ong kỳ thú ⬡',
+                desc: 'Mở rộng tư duy đa giác từ hình vuông lên <b>hình lục giác đều 6 cạnh</b> khép kín! Sử dụng vòng lặp <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">for</code> 6 lần: mỗi lần tiến <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">80</code> bước và rẽ <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">60°</code> (áp dụng công thức góc ngoài: 360° / 6 = 60°). Hãy chỉnh nét bút dày <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">4</code> và chọn màu sắc rực rỡ.',
                 validate: function (consoleLog, paths, variables) {
                     const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
                     const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 15);
-                    // Tam giác phải có đúng 3 cạnh (loại bỏ hình vuông 4 cạnh)
-                    if (validLines.length !== 3) return false;
+                    // Lục giác đều phải có đúng 6 cạnh
+                    if (validLines.length !== 6) return false;
                     for (let p of validLines) {
                         const dist = Math.hypot(p.x2 - p.x1, p.y2 - p.y1);
-                        if (Math.abs(dist - 120) > 20) return false;
+                        if (Math.abs(dist - 80) > 25) return false;
                     }
                     // Khép kín: điểm cuối chạm điểm đầu
                     const first = validLines[0];
                     const last = validLines[validLines.length - 1];
                     if (Math.hypot(last.x2 - first.x1, last.y2 - first.y1) > 25) return false;
-                    // Góc rẽ tam giác đều là 120 độ (cos xấp xỉ -0.5, nằm trong [-0.8, -0.2])
+                    // Góc rẽ lục giác đều là 60 độ (cos xấp xỉ 0.5, nằm trong [0.25, 0.75])
                     for (let i = 0; i < validLines.length - 1; i++) {
                         const cosA = calcVectorCos(validLines[i], validLines[i + 1]);
-                        if (cosA > -0.2 || cosA < -0.8) return false;
+                        if (cosA < 0.25 || cosA > 0.75) return false;
                     }
-                    return true;
+                    const closeCos = calcVectorCos(last, first);
+                    if (closeCos < 0.25 || closeCos > 0.75) return false;
+
+                    // Yêu cầu nét bút dày >= 3 (đề bài yêu cầu nét 4)
+                    const hasThickPen = validLines.some(p => (p.width || 1) >= 3);
+                    return hasThickPen;
                 }
             },
             {
-                id: 'draw_circle',
+                id: 'draw_clover',
                 level: 2,
                 levelName: 'Cấp độ 2: Họa sĩ hình học',
                 levelColor: '#f59e0b',
-                title: 'Thử thách 6: Vòng tròn kỳ diệu 🟣',
-                desc: 'Vẽ một hình tròn hoàn chỉnh có bán kính là <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">50</code> bước bằng lệnh vẽ đường cong tròn của Rùa.',
+                title: 'Thử thách 6: Cỏ 4 lá may mắn (Bông hoa 4 cánh) 🍀',
+                desc: 'Khám phá sự kỳ diệu khi kết hợp hình tròn và vòng lặp! Sử dụng vòng lặp <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">for</code> 4 lần: mỗi lần vẽ một hình tròn bán kính <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">40</code> bước, sau đó rẽ phải <code class="bg-slate-100 px-1 py-0.5 rounded text-red-500 font-bold">90°</code> để tạo thành bông hoa 4 cánh (cỏ 4 lá) đối xứng tuyệt mỹ.',
                 validate: function (consoleLog, paths, variables) {
-                    const circle = paths.find(p => p.type === 'circle' && Math.abs(p.r - 50) <= 12);
-                    if (circle) return true;
-                    const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
-                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 5);
-                    if (validLines.length >= 24) {
-                        const first = validLines[0];
-                        const last = validLines[validLines.length - 1];
-                        return Math.hypot(last.x2 - first.x1, last.y2 - first.y1) <= 25;
+                    const circles = paths.filter(p => p.type === 'circle' && Math.abs(p.r - 40) <= 20);
+                    if (circles.length >= 4) {
+                        // Kiểm tra 4 cánh hoa phải xòe ra các hướng khác nhau (không vẽ đè 1 chỗ)
+                        if (circles[0].cx !== undefined && circles[1].cx !== undefined) {
+                            const centers = circles.map(c => `${Math.round(c.cx || 0)},${Math.round(c.cy || 0)}`);
+                            const uniqueCenters = new Set(centers);
+                            if (uniqueCenters.size < 3) return false;
+                        }
+                        return true;
                     }
-                    return false;
+                    // Hỗ trợ trường hợp học sinh tự vẽ các vòng tròn bằng nhiều đoạn thẳng nhỏ liên tiếp
+                    const lines = paths.filter(p => p.type === undefined || p.x1 !== undefined);
+                    const validLines = lines.filter(p => Math.hypot(p.x2 - p.x1, p.y2 - p.y1) >= 3);
+                    return validLines.length >= 40;
                 }
             },
 
@@ -4467,7 +5137,12 @@ for i in range(4):
                 } else if (cmd.type === 'pencolor' || cmd.type === 'color') {
                     st.color = cmd.color;
                 } else if (cmd.type === 'circle') {
-                    simPaths.push({ type: 'circle', r: cmd.value || cmd.R || 50, color: st.color, width: st.width });
+                    const r = cmd.value || cmd.R || 50;
+                    const R = Math.abs(r);
+                    const radCenter = (st.angle - 90) * Math.PI / 180;
+                    const cx = st.x + R * Math.cos(radCenter);
+                    const cy = st.y + R * Math.sin(radCenter);
+                    simPaths.push({ type: 'circle', cx: cx, cy: cy, r: R, color: st.color, width: st.width });
                 }
             }
             return simPaths;
@@ -4477,6 +5152,8 @@ for i in range(4):
         window.challengeFastTrack = false;
 
         function checkCurrentChallenge(isInstant = false) {
+            // Chỉ chấm điểm khi đang ở chế độ tự viết mã Python
+            if (window.currentMode !== 'code') return;
             if (!window.activeChallengeId) return;
             const ch = window.challenges.find(c => c.id === window.activeChallengeId);
             if (!ch) return;
