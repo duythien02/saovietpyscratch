@@ -109,14 +109,17 @@
             .scratch-sidebar {
                 width: 58px;
             }
+
             .scratch-category {
                 padding: 6px 2px;
             }
+
             .scratch-cat-circle {
                 width: 18px;
                 height: 18px;
                 margin-bottom: 2px;
             }
+
             .scratch-cat-text {
                 font-size: 8.5px;
             }
@@ -287,11 +290,25 @@
             min-height: 0;
         }
 
-        #commands-panel { grid-area: commands; }
-        #stage-panel { grid-area: stage; }
-        #terminal-panel { grid-area: terminal; }
-        #tabs-panel { grid-area: tabs; }
-        #variables-panel { grid-area: variables; }
+        #commands-panel {
+            grid-area: commands;
+        }
+
+        #stage-panel {
+            grid-area: stage;
+        }
+
+        #terminal-panel {
+            grid-area: terminal;
+        }
+
+        #tabs-panel {
+            grid-area: tabs;
+        }
+
+        #variables-panel {
+            grid-area: variables;
+        }
 
         /* 1. Mobile (< 768px): Single column stacked */
         @media (max-width: 767px) {
@@ -301,11 +318,32 @@
                 overflow-y: auto;
                 height: auto;
             }
-            #commands-panel { height: 50vh; min-height: 340px; flex-shrink: 0; }
-            #stage-panel { height: 320px; flex-shrink: 0; }
-            #terminal-panel { height: 160px; flex-shrink: 0; }
-            #tabs-panel { height: 220px; flex-shrink: 0; }
-            #variables-panel { min-height: 80px; flex-shrink: 0; }
+
+            #commands-panel {
+                height: 50vh;
+                min-height: 340px;
+                flex-shrink: 0;
+            }
+
+            #stage-panel {
+                height: 320px;
+                flex-shrink: 0;
+            }
+
+            #terminal-panel {
+                height: 160px;
+                flex-shrink: 0;
+            }
+
+            #tabs-panel {
+                height: 220px;
+                flex-shrink: 0;
+            }
+
+            #variables-panel {
+                min-height: 80px;
+                flex-shrink: 0;
+            }
         }
 
         /* 2. Responsive / Half-screen (768px to 1399px)
@@ -322,10 +360,15 @@
                     "variables variables";
                 overflow: hidden;
             }
-            #commands-panel, #stage-panel, #terminal-panel, #tabs-panel {
+
+            #commands-panel,
+            #stage-panel,
+            #terminal-panel,
+            #tabs-panel {
                 min-height: 0;
                 height: 100%;
             }
+
             #variables-panel {
                 min-height: 95px;
                 height: 110px;
@@ -343,7 +386,12 @@
                     "commands terminal variables";
                 overflow: hidden;
             }
-            #commands-panel, #stage-panel, #terminal-panel, #tabs-panel, #variables-panel {
+
+            #commands-panel,
+            #stage-panel,
+            #terminal-panel,
+            #tabs-panel,
+            #variables-panel {
                 min-height: 0;
                 height: 100%;
             }
@@ -354,10 +402,14 @@
             #app-main {
                 overflow-y: auto !important;
             }
-            #commands-panel, #stage-panel {
+
+            #commands-panel,
+            #stage-panel {
                 min-height: 280px;
             }
-            #terminal-panel, #tabs-panel {
+
+            #terminal-panel,
+            #tabs-panel {
                 min-height: 160px;
             }
         }
@@ -402,18 +454,22 @@
                 overflow-y: auto !important;
                 height: auto !important;
             }
+
             body #app-main.stage-expanded #stage-panel {
                 height: 380px !important;
                 flex-shrink: 0 !important;
             }
+
             body #app-main.stage-expanded #tabs-panel {
                 height: 320px !important;
                 flex-shrink: 0 !important;
             }
+
             body #app-main.stage-expanded #terminal-panel {
                 height: 180px !important;
                 flex-shrink: 0 !important;
             }
+
             body #app-main.stage-expanded #variables-panel {
                 min-height: 100px !important;
                 flex-shrink: 0 !important;
@@ -469,8 +525,10 @@
 
         <!-- Panel 1 (Nửa trên trái): Khu vực lệnh (Blockly / Gõ Python) -->
         <section id="commands-panel" class="panel-card flex flex-col relative min-h-0 h-full">
-            <div class="bg-[#e6effc] px-3 sm:px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0 gap-1">
-                <div class="flex items-center space-x-1.5 sm:space-x-2 text-[#2b53a7] font-bold text-xs sm:text-sm truncate">
+            <div
+                class="bg-[#e6effc] px-3 sm:px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0 gap-1">
+                <div
+                    class="flex items-center space-x-1.5 sm:space-x-2 text-[#2b53a7] font-bold text-xs sm:text-sm truncate">
                     <i class="fa-solid fa-puzzle-piece mr-0.5 sm:mr-1"></i>
                     <span>Khu vực lệnh</span>
                 </div>
@@ -603,8 +661,7 @@
 
         <!-- Panel 2 (Nửa trên phải): Khu vực sân khấu (Turtle Playground) -->
         <section id="stage-panel" class="panel-card flex flex-col min-h-0 h-full">
-            <div
-                class="bg-[#e6effc] px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0">
+            <div class="bg-[#e6effc] px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0">
                 <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
                     <i class="fa-solid fa-turtle mr-1"></i>
                     <span>Khu vực sân khấu</span>
@@ -616,7 +673,8 @@
                         <i class="fa-solid fa-flag text-lg pointer-events-none"></i>
                     </button>
                     <button id="stop-btn" onclick="stopExecution()"
-                        class="text-red-500 hover:text-red-600 bouncy-btn transition-transform cursor-pointer" title="Dừng">
+                        class="text-red-500 hover:text-red-600 bouncy-btn transition-transform cursor-pointer"
+                        title="Dừng">
                         <i class="fa-solid fa-circle-stop text-lg"></i>
                     </button>
                     <button id="reset-btn" onclick="hardResetStage()"
@@ -637,7 +695,8 @@
                 </div>
             </div>
             <!-- Stage (Canvas) -->
-            <div id="stage-canvas-container" class="flex-1 bg-[#e4e9f2] p-2 sm:p-3 relative flex items-center justify-center overflow-hidden min-h-0">
+            <div id="stage-canvas-container"
+                class="flex-1 bg-[#e4e9f2] p-2 sm:p-3 relative flex items-center justify-center overflow-hidden min-h-0">
                 <canvas id="turtle-canvas" width="600" height="340"
                     class="rounded-xl border-2 border-slate-300 shadow-inner bg-[#fffdf5] block"></canvas>
             </div>
@@ -645,14 +704,14 @@
 
         <!-- Panel 3 (Nửa dưới trái): Terminal Panel Card -->
         <section id="terminal-panel" class="panel-card flex flex-col min-h-0 h-full">
-            <div
-                class="bg-[#e6effc] px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0">
+            <div class="bg-[#e6effc] px-4 py-2 border-b-3 border-[#2b53a7] flex items-center justify-between shrink-0">
                 <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
                     <i class="fa-solid fa-terminal mr-1"></i>
                     <span>Terminal</span>
                 </div>
                 <button onclick="document.getElementById('console-output').textContent=''"
-                    class="text-xs text-slate-400 hover:text-slate-600 transition-colors cursor-pointer" title="Xóa màn hình Terminal">
+                    class="text-xs text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                    title="Xóa màn hình Terminal">
                     <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
@@ -693,8 +752,7 @@
                         class="font-sans text-[13.5px] leading-relaxed text-slate-800 flex-1 whitespace-pre-wrap">
                         Ghép khối để xem giải thích nhé!</div>
                 </div>
-                <div id="tab-challenge"
-                    class="absolute inset-0 p-4 overflow-auto bg-[#fffdfa] flex flex-col hidden">
+                <div id="tab-challenge" class="absolute inset-0 p-4 overflow-auto bg-[#fffdfa] flex flex-col hidden">
                     <div class="flex items-center space-x-2.5 pb-2.5 border-b border-amber-200/80 mb-3 shrink-0">
                         <span class="text-2xl">🎯</span>
                         <div class="min-w-0 flex-1">
@@ -714,7 +772,8 @@
                         <div
                             class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] flex items-center space-x-2">
                             <i class="fa-solid fa-keyboard text-amber-600 text-sm shrink-0"></i>
-                            <span>Chỉ chấm điểm khi bạn viết code ở chế độ <b>⌨️ Gõ Python</b> và bấm <b>Lá cờ vàng</b>!</span>
+                            <span>Chỉ chấm điểm khi bạn viết code ở chế độ <b>⌨️ Gõ Python</b> và bấm <b>Lá cờ
+                                    vàng</b>!</span>
                         </div>
                     </div>
                     <div class="pt-2.5 border-t border-slate-200 flex items-center justify-between mt-2 shrink-0">
@@ -730,7 +789,8 @@
         </section>
 
         <!-- Panel 5 (Dưới cùng ngang 2 cột): Magic Variables Card -->
-        <section id="variables-panel" class="panel-card px-4 py-2.5 sm:py-3 flex flex-col justify-between shrink-0 min-h-0">
+        <section id="variables-panel"
+            class="panel-card px-4 py-2.5 sm:py-3 flex flex-col justify-between shrink-0 min-h-0">
             <div class="flex items-center justify-between shrink-0 mb-1.5">
                 <div class="flex items-center space-x-2 text-[#2b53a7] font-bold text-sm">
                     <i class="fa-solid fa-wand-magic-sparkles mr-1 text-[#f89b1c]"></i>
@@ -1183,11 +1243,24 @@
                 let increment = pyGen.valueToCode(block, 'BY', pyGen.ORDER_NONE) || '1';
                 let branch = pyGen.statementToCode(block, 'DO') || '  pass\n';
 
+                let endArg = argument1;
+                let numEnd = Number(argument1);
+                let numStep = Number(increment);
+                if (!isNaN(numEnd)) {
+                    if (numStep >= 0) {
+                        endArg = String(numEnd + 1);
+                    } else {
+                        endArg = String(numEnd - 1);
+                    }
+                } else {
+                    endArg = `${argument1} + 1`;
+                }
+
                 let rangeStr;
                 if (increment === '1') {
-                    rangeStr = `range(${argument0}, ${argument1})`;
+                    rangeStr = `range(${argument0}, ${endArg})`;
                 } else {
-                    rangeStr = `range(${argument0}, ${argument1}, ${increment})`;
+                    rangeStr = `range(${argument0}, ${endArg}, ${increment})`;
                 }
 
                 return `for ${variable0} in ${rangeStr}:\n${branch}`;
@@ -1869,6 +1942,8 @@
                             executionTimer = requestAnimationFrame(step);
                         } else {
                             executionTimer = null;
+                            turtleState.loopText = null;
+                            drawCanvas();
                         }
                         return;
                     }
@@ -2101,8 +2176,11 @@
                 pythonRaw = pythonRaw.replace(/for\s+([a-zA-Z0-9_]+)\s+in\s+\([^)]+\)\s+and\s+upRange\(([^,]+),\s*([^,]+),\s*([^)]+)\)\s+or\s+downRange[^:]+:/g, function (match, varName, start, stop, step) {
                     let s = stop.trim();
                     let st = step.trim();
+                    let numS = Number(s);
+                    let numSt = Number(st);
+                    let endStr = !isNaN(numS) ? (numSt >= 0 ? (numS + 1) : (numS - 1)) : `${s} + 1`;
                     let stepStr = (st === '1') ? "" : ", " + st;
-                    return `for ${varName} in range(${start.trim()}, ${s}${stepStr}):`;
+                    return `for ${varName} in range(${start.trim()}, ${endStr}${stepStr}):`;
                 });
 
                 // Loại bỏ các khai báo biến "= None" vô nghĩa của Blockly Python
@@ -2388,83 +2466,83 @@
                 };
             } catch (e) { }
 
-        function parseXmlToDom(xmlText) {
-            if (typeof Blockly !== 'undefined') {
-                if (Blockly.utils && Blockly.utils.xml && typeof Blockly.utils.xml.textToDom === 'function') {
-                    return Blockly.utils.xml.textToDom(xmlText);
+            function parseXmlToDom(xmlText) {
+                if (typeof Blockly !== 'undefined') {
+                    if (Blockly.utils && Blockly.utils.xml && typeof Blockly.utils.xml.textToDom === 'function') {
+                        return Blockly.utils.xml.textToDom(xmlText);
+                    }
+                    if (Blockly.Xml && typeof Blockly.Xml.textToDom === 'function') {
+                        return Blockly.Xml.textToDom(xmlText);
+                    }
                 }
-                if (Blockly.Xml && typeof Blockly.Xml.textToDom === 'function') {
-                    return Blockly.Xml.textToDom(xmlText);
-                }
-            }
-            try {
-                const parser = new DOMParser();
-                return parser.parseFromString(xmlText, 'text/xml').documentElement;
-            } catch (e) {
-                console.error("parseXmlToDom error:", e);
-                return null;
-            }
-        }
-
-        function updateVariableBlocksInToolbox() {
-            if (!workspace) return;
-            cleanUnwantedVariables(workspace);
-            const validVars = getWorkspaceVariables(workspace).filter(v => v.name !== 'vật' && v.name !== 'item');
-            const hasVars = validVars.length > 0;
-            if (workspace._hasVariableBlocks === hasVars && hasVars === false) return;
-            workspace._hasVariableBlocks = hasVars;
-
-            const flyout = workspace.getFlyout();
-            let prevScrollY = 0;
-            if (flyout && flyout.getWorkspace() && flyout.getWorkspace().scrollbar) {
-                prevScrollY = flyout.getWorkspace().scrollY;
-            }
-
-            let xmlDom = null;
-            const xmlStr = getToolboxXml(hasVars);
-            let tbEl = document.getElementById('toolbox');
-            if (tbEl) {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = xmlStr;
-                const newXml = tempDiv.querySelector('xml');
-                if (newXml) {
-                    tbEl.innerHTML = newXml.innerHTML;
-                    xmlDom = tbEl;
-                }
-            }
-            if (!xmlDom) {
-                xmlDom = parseXmlToDom(xmlStr);
-            }
-
-            if (xmlDom) {
-                workspace.updateToolbox(xmlDom);
-                cleanUnwantedVariables(workspace);
-            }
-
-            if (typeof fixFlyoutScale === 'function') {
-                fixFlyoutScale();
-            }
-
-            if (flyout && flyout.getWorkspace() && flyout.getWorkspace().scrollbar && prevScrollY !== 0) {
                 try {
-                    flyout.getWorkspace().scrollbar.setY(Math.abs(prevScrollY));
-                } catch (e) { }
+                    const parser = new DOMParser();
+                    return parser.parseFromString(xmlText, 'text/xml').documentElement;
+                } catch (e) {
+                    console.error("parseXmlToDom error:", e);
+                    return null;
+                }
             }
-        }
-        window.updateVariableBlocksInToolbox = updateVariableBlocksInToolbox;
 
-        workspace.registerButtonCallback('CREATE_VARIABLE', function (button) {
-            const targetWs = (button && typeof button.getTargetWorkspace === 'function') ? button.getTargetWorkspace() : workspace;
-            Blockly.Variables.createVariableButtonHandler(targetWs, function () {
-                updateVariableBlocksInToolbox();
+            function updateVariableBlocksInToolbox() {
+                if (!workspace) return;
+                cleanUnwantedVariables(workspace);
+                const validVars = getWorkspaceVariables(workspace).filter(v => v.name !== 'vật' && v.name !== 'item');
+                const hasVars = validVars.length > 0;
+                if (workspace._hasVariableBlocks === hasVars && hasVars === false) return;
+                workspace._hasVariableBlocks = hasVars;
+
+                const flyout = workspace.getFlyout();
+                let prevScrollY = 0;
+                if (flyout && flyout.getWorkspace() && flyout.getWorkspace().scrollbar) {
+                    prevScrollY = flyout.getWorkspace().scrollY;
+                }
+
+                let xmlDom = null;
+                const xmlStr = getToolboxXml(hasVars);
+                let tbEl = document.getElementById('toolbox');
+                if (tbEl) {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = xmlStr;
+                    const newXml = tempDiv.querySelector('xml');
+                    if (newXml) {
+                        tbEl.innerHTML = newXml.innerHTML;
+                        xmlDom = tbEl;
+                    }
+                }
+                if (!xmlDom) {
+                    xmlDom = parseXmlToDom(xmlStr);
+                }
+
+                if (xmlDom) {
+                    workspace.updateToolbox(xmlDom);
+                    cleanUnwantedVariables(workspace);
+                }
+
+                if (typeof fixFlyoutScale === 'function') {
+                    fixFlyoutScale();
+                }
+
+                if (flyout && flyout.getWorkspace() && flyout.getWorkspace().scrollbar && prevScrollY !== 0) {
+                    try {
+                        flyout.getWorkspace().scrollbar.setY(Math.abs(prevScrollY));
+                    } catch (e) { }
+                }
+            }
+            window.updateVariableBlocksInToolbox = updateVariableBlocksInToolbox;
+
+            workspace.registerButtonCallback('CREATE_VARIABLE', function (button) {
+                const targetWs = (button && typeof button.getTargetWorkspace === 'function') ? button.getTargetWorkspace() : workspace;
+                Blockly.Variables.createVariableButtonHandler(targetWs, function () {
+                    updateVariableBlocksInToolbox();
+                });
             });
-        });
 
-        workspace.registerButtonCallback('DELETE_VARIABLE', function () {
-            if (typeof openDeleteVariableModal === 'function') {
-                openDeleteVariableModal();
-            }
-        });
+            workspace.registerButtonCallback('DELETE_VARIABLE', function () {
+                if (typeof openDeleteVariableModal === 'function') {
+                    openDeleteVariableModal();
+                }
+            });
 
             // Dynamic responsive flyout metrics
             const getTargetFlyoutMetrics = () => {
@@ -2648,15 +2726,18 @@
             id="delete-variable-box">
             <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xl">
+                    <div
+                        class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-xl">
                         🗑️
                     </div>
                     <div>
-                        <h3 class="text-base sm:text-lg font-bold text-slate-800" id="delete-var-modal-title">Xóa biến số</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800" id="delete-var-modal-title">Xóa biến
+                            số</h3>
                         <p class="text-xs text-slate-500">Quản lý và xóa biến số khỏi chương trình</p>
                     </div>
                 </div>
-                <button onclick="closeDeleteVariableModal()" class="text-slate-400 hover:text-slate-600 cursor-pointer p-1">
+                <button onclick="closeDeleteVariableModal()"
+                    class="text-slate-400 hover:text-slate-600 cursor-pointer p-1">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -2664,8 +2745,11 @@
                 <!-- Nội dung xóa biến sẽ được điền ở đây -->
             </div>
             <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100" id="delete-var-modal-actions">
-                <button id="delete-var-cancel-btn" onclick="closeDeleteVariableModal()" class="px-4 py-2 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer text-sm">Hủy</button>
-                <button id="delete-var-confirm-btn" class="px-5 py-2 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 shadow-md shadow-red-200 transition-colors cursor-pointer text-sm hidden">Xác nhận xóa</button>
+                <button id="delete-var-cancel-btn" onclick="closeDeleteVariableModal()"
+                    class="px-4 py-2 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer text-sm">Hủy</button>
+                <button id="delete-var-confirm-btn"
+                    class="px-5 py-2 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 shadow-md shadow-red-200 transition-colors cursor-pointer text-sm hidden">Xác
+                    nhận xóa</button>
             </div>
         </div>
     </div>
@@ -3150,6 +3234,27 @@
             return '?';
         }
 
+        function getPythonCodeVariables(pyCode) {
+            if (!pyCode) return [];
+            const vars = new Set();
+            const lines = pyCode.split('\n');
+            for (let line of lines) {
+                const clean = stripInlineComment(line).trim();
+                const forMatch = clean.match(/^for\s+([a-zA-Z_][a-zA-Z0-9_]*)\s+in\s+range\b/);
+                if (forMatch) {
+                    vars.add(forMatch[1]);
+                }
+                const assignMatch = clean.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*(\+=|-=|\*=|\/=|%=|=)\s*(.*)/);
+                if (assignMatch) {
+                    const name = assignMatch[1];
+                    if (name !== 'turtle' && name !== 't') {
+                        vars.add(name);
+                    }
+                }
+            }
+            return Array.from(vars);
+        }
+
         function initVariableWatcher(clearValues = false) {
             const isRunning = (typeof executionTimer !== 'undefined' && executionTimer !== null) ||
                 (typeof currentCommand !== 'undefined' && currentCommand !== null) ||
@@ -3158,7 +3263,17 @@
             if (clearValues || !isRunning) {
                 window.activeVariables = {};
             }
-            if (typeof workspace !== 'undefined' && workspace) {
+
+            if (window.currentMode === 'code') {
+                const textarea = document.getElementById('python-textarea');
+                const pyCode = textarea ? textarea.value : '';
+                const codeVars = getPythonCodeVariables(pyCode);
+                codeVars.forEach(v => {
+                    if (window.activeVariables[v] === undefined) {
+                        window.activeVariables[v] = '?';
+                    }
+                });
+            } else if (typeof workspace !== 'undefined' && workspace) {
                 if (typeof cleanUnwantedVariables === 'function') {
                     cleanUnwantedVariables(workspace);
                 }
@@ -3369,6 +3484,9 @@
                 renderSyntaxCards();
                 if (typeof updatePythonCodeExplanation === 'function') {
                     updatePythonCodeExplanation();
+                }
+                if (typeof initVariableWatcher === 'function') {
+                    initVariableWatcher();
                 }
             }
         }
@@ -3775,8 +3893,13 @@ for i in range(4):
     t.right(90)
 `;
             document.getElementById('python-textarea').value = template;
-            if (window.currentMode === 'code' && typeof updatePythonCodeExplanation === 'function') {
-                updatePythonCodeExplanation();
+            if (window.currentMode === 'code') {
+                if (typeof updatePythonCodeExplanation === 'function') {
+                    updatePythonCodeExplanation();
+                }
+                if (typeof initVariableWatcher === 'function') {
+                    initVariableWatcher();
+                }
             }
         }
 
@@ -3884,8 +4007,13 @@ for i in range(4):
             });
 
             textarea.addEventListener('input', function () {
-                if (window.currentMode === 'code' && typeof updatePythonCodeExplanation === 'function') {
-                    updatePythonCodeExplanation();
+                if (window.currentMode === 'code') {
+                    if (typeof updatePythonCodeExplanation === 'function') {
+                        updatePythonCodeExplanation();
+                    }
+                    if (typeof initVariableWatcher === 'function' && !executionTimer && !currentCommand) {
+                        initVariableWatcher();
+                    }
                 }
             });
         }
@@ -4057,14 +4185,18 @@ for i in range(4):
                 } else if (/^while\s+(.*):$/.test(textWithoutComment)) {
                     const m = textWithoutComment.match(/^while\s+(.*):$/);
                     desc = `<b class="text-blue-600">Lặp khi</b> <code>${escapeHtml(translateLogicWords(m[1].trim()))}</code>:`;
-                } else if (/^for\s+([a-zA-Z0-9_]+)\s+in\s+range\(([^)]+)\)\s*:$/.test(textWithoutComment)) {
-                    const m = textWithoutComment.match(/^for\s+([a-zA-Z0-9_]+)\s+in\s+range\(([^)]+)\)\s*:$/);
+                } else if (/^for\s+([a-zA-Z0-9_]+)\s+in\s+range\s*\(([^)]+)\)\s*:$/.test(textWithoutComment)) {
+                    const m = textWithoutComment.match(/^for\s+([a-zA-Z0-9_]+)\s+in\s+range\s*\(([^)]+)\)\s*:$/);
                     const varName = m[1];
                     const args = m[2].split(',').map(s => s.trim());
                     if (args.length === 1) {
-                        desc = `<b class="text-blue-600">Lặp ${escapeHtml(args[0])} lần</b> (biến <b class="text-indigo-600">${varName}</b> từ 0 đến ${escapeHtml(args[0])} - 1):`;
+                        const num = Number(args[0]);
+                        const endVal = !isNaN(num) ? (num - 1) : `${args[0]} - 1`;
+                        desc = `<b class="text-blue-600">Lặp ${escapeHtml(args[0])} lần</b> (biến <b class="text-indigo-600">${varName}</b> từ 0 đến ${escapeHtml(String(endVal))}):`;
                     } else if (args.length === 2) {
-                        desc = `<b class="text-blue-600">Lặp biến <b class="text-indigo-600">${varName}</b></b> từ ${escapeHtml(args[0])} đến ${escapeHtml(args[1])} - 1:`;
+                        const num = Number(args[1]);
+                        const endVal = !isNaN(num) ? (num - 1) : `${args[1]} - 1`;
+                        desc = `<b class="text-blue-600">Lặp biến <b class="text-indigo-600">${varName}</b></b> từ ${escapeHtml(args[0])} đến ${escapeHtml(String(endVal))}:`;
                     } else {
                         desc = `<b class="text-blue-600">Lặp biến <b class="text-indigo-600">${varName}</b></b> từ ${escapeHtml(args[0])} đến ${escapeHtml(args[1])} (bước ${escapeHtml(args[2])}):`;
                     }
@@ -4505,8 +4637,8 @@ for i in range(4):
                     const constructorCall = varMatch ? varMatch[2] : 'turtle.Turtle()';
                     jsLine = `var ${varName} = ${constructorCall};`;
                 }
-                else if (trimmed.startsWith('for ') && trimmed.includes(' in range(') && trimmed.endsWith(':')) {
-                    const forMatch = trimmed.match(/^for\s+([a-zA-Z0-9_]+)\s+in\s+range\(([^)]+)\)\s*:/);
+                else if (/^for\s+([a-zA-Z0-9_]+)\s+in\s+range\s*\(([^)]+)\)\s*:$/.test(trimmed)) {
+                    const forMatch = trimmed.match(/^for\s+([a-zA-Z0-9_]+)\s+in\s+range\s*\(([^)]+)\)\s*:$/);
                     if (forMatch) {
                         const loopVar = forMatch[1];
                         const rangeArgs = forMatch[2].split(',').map(s => s.trim());
@@ -4527,8 +4659,9 @@ for i in range(4):
                         }
 
                         jsLine = `for (var ${loopVar} = Number(${start}); Number(${step}) >= 0 ? ${loopVar} < Number(${stop}) : ${loopVar} > Number(${stop}); ${loopVar} += Number(${step})) {\n`;
-                        jsLine += `  queueCommand({type: "loop_text", value: "Lặp: " + "${loopVar}" + " = " + ${loopVar}});`;
-                        jsLine += `  queueCommand({type: "var_update", name: "${loopVar}", value: ${loopVar}});`;
+                        jsLine += `  window.activeVariables["${loopVar}"] = ${loopVar};\n`;
+                        jsLine += `  queueCommand({type: "loop_text", value: "Lặp: " + "${loopVar}" + " = " + ${loopVar}});\n`;
+                        jsLine += `  queueCommand({type: "var_update", name: "${loopVar}", value: ${loopVar}});\n`;
 
                         blockStack.push({ indent: indent, type: 'for' });
                     }
@@ -4557,9 +4690,9 @@ for i in range(4):
                         const op = assignMatch[2];
                         const expr = assignMatch[3];
                         if (op === '=') {
-                            jsLine = `var ${varName} = ${expr};\nqueueCommand({type: "var_update", name: "${varName}", value: ${varName}});`;
+                            jsLine = `var ${varName} = ${expr};\nwindow.activeVariables["${varName}"] = ${varName};\nqueueCommand({type: "var_update", name: "${varName}", value: ${varName}});`;
                         } else {
-                            jsLine = `${varName} ${op} ${expr};\nqueueCommand({type: "var_update", name: "${varName}", value: ${varName}});`;
+                            jsLine = `${varName} ${op} ${expr};\nwindow.activeVariables["${varName}"] = ${varName};\nqueueCommand({type: "var_update", name: "${varName}", value: ${varName}});`;
                         }
                     }
                 }
